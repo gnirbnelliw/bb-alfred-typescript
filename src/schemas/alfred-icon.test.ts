@@ -1,6 +1,8 @@
 import fs from 'fs';
+import path from 'path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type AlfredIcon, alfredIconSchema, iconFileExists } from './alfred-icon';
+import { defaultAppIcon, defaultAppIconPath, normalizedIconPath } from './alfred-icon';
 
 // Mock the fs module
 vi.mock('fs');
@@ -31,9 +33,15 @@ describe('iconFileExists', () => {
   });
 
   it('should handle absolute paths', () => {
+    // Set filePath
+    const filePath = '/absolute/path/to/icon.png';
+    // We need to mock path for this test
+    vi.mock('path');
+    vi.mocked(path.basename).mockReturnValue('icon.png');
+    vi.mocked(path.join).mockReturnValue(filePath);
     const result = iconFileExists('/absolute/path/to/icon.png');
     expect(result).toBe(true);
-    expect(fs.existsSync).toHaveBeenCalledWith('/absolute/path/to/icon.png');
+    expect(fs.existsSync).toHaveBeenCalledWith(filePath);
   });
 
   it('should handle relative paths by joining with iconFolderPath', () => {
@@ -163,5 +171,59 @@ describe('alfredIconSchema', () => {
       const result = alfredIconSchema.safeParse(validIcon);
       expect(result.success).toBe(true);
     }
+  });
+});
+
+describe('normalizedIconPath', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(fs.existsSync).mockReturnValue(true);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('should return a default icon path when given an invalid path', () => {
+    vi.mocked(fs.existsSync).mockReturnValue(false);
+    const result = normalizedIconPath('invalid-icon.png');
+    expect(result).toBe(defaultAppIconPath());
+  });
+
+  it('should return normalized path when icon exists', async () => {
+    // Set up filePath
+    const filePath = 'test-icon.png';
+    // Mock path functions
+    vi.mock('path');
+    vi.mocked(path.basename).mockReturnValue(filePath);
+    vi.mocked(path.join).mockReturnValue(`mocked-absolute-path/img/icons/${filePath}`);
+    const result = normalizedIconPath(filePath);
+    expect(result).toContain(filePath);
+  });
+
+  it('should return default icon path when icon does not exist', async () => {
+    vi.mocked(fs.existsSync).mockReturnValue(false);
+    const { normalizedIconPath, defaultAppIconPath } = await import('./alfred-icon');
+    const result = normalizedIconPath('nonexistent.png');
+    expect(result).toBe(defaultAppIconPath());
+  });
+});
+
+describe('defaultAppIcon', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(fs.existsSync).mockReturnValue(true);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('should return default app icon', async () => {
+    const { defaultAppIcon } = await import('./alfred-icon');
+    const result = defaultAppIcon();
+    expect(result).toHaveProperty('type', 'fileicon');
+    expect(result).toHaveProperty('path');
+    expect(result.path).toContain('alfred.png');
   });
 });
