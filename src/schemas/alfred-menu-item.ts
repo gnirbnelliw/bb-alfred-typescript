@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { AlfredIcon, alfredIconSchema } from './alfred-icon';
 
-// Zod schema for Alfred Menu Item
+// Zod schema for Alfred Menu Item.. alfredIconSchema.optional()
 export const alfredMenuItemSchema = z.object({
   uid: z.string(),
   type: z.enum(['default', 'file', 'file:skipcheck']).optional(),
@@ -16,10 +16,14 @@ export const alfredMenuItemSchema = z.object({
 // Typescript type inferred from the schema
 export type AlfredMenuItem = z.infer<typeof alfredMenuItemSchema>;
 
+// Zod Schema for Alfred variables (arbitrary string keys and string values)
+export const alfredVariableSchema = z.record(z.string(), z.string());
+
 // Zod schema for items array with uid uniqueness validation
 export const alfredMenuItemsSchema = z
   .object({
     items: z.array(alfredMenuItemSchema),
+    variables: alfredVariableSchema.optional(),
   })
   .refine(
     (data) => {
