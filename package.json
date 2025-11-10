@@ -5,13 +5,21 @@
   "license": "MIT",
   "scripts": {
     "test": "vitest",
+    "test:coverage": "vitest run --coverage",
     "test:alfred-icons": "vitest src/schemas/alfred-icon.test.ts",
     "test:alfred-menu-items": "vitest src/schemas/alfred-menu-item.test.ts",
     "lint": "biome lint ./src",
     "format": "biome format --write ./src",
-    "check": "biome check --write ./src"
+    "check": "biome check --write ./src",
+    "build": "yarn empty-dist && npx esbuild src/index.ts --bundle --platform=node --outfile=dist/index.js && yarn sync:assets",
+    "empty-dist": "rm -rf ./dist && mkdir dist",
+    "sync:images": "cp -R ./src/img ./dist/img",
+    "sync:markdown": "cp -R ./src/markdown ./dist/markdown",
+    "sync:assets": "yarn sync:images && yarn sync:markdown",
+    "sync:alfred": "yarn build && yarn tsx scripts/sync-alfred.ts"
   },
   "dependencies": {
+    "dotenv": "^17.2.3",
     "zod": "^4.1.12"
   },
   "devDependencies": {
@@ -19,6 +27,7 @@
     "@faker-js/faker": "^10.1.0",
     "@types/node": "^24.10.0",
     "@vitest/coverage-v8": "^4.0.8",
+    "esbuild": "^0.27.0",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",
     "vitest": "^4.0.8"

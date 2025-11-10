@@ -114,20 +114,22 @@ describe('alfredMenuItemSchema', () => {
     expect(result.success).toBe(false);
   });
 
-  it('should reject a menu item with invalid icon type enum value', () => {
+  it('should ignore invalid props like icon[type]', () => {
     const invalidItem = {
       uid: 'test-uid',
       title: 'Test Title',
       arg: 'test-arg',
       autocomplete: 'test-autocomplete',
       icon: {
-        type: 'invalid-icon-type',
+        type: 'totally irrelvant property',
         path: '/path/to/icon',
       },
     };
 
     const result = alfredMenuItemSchema.safeParse(invalidItem);
-    expect(result.success).toBe(false);
+    expect(result.success).toBe(true);
+    // Assert that result.data does not have the type property in its icon
+    expect(result.data?.icon).not.toHaveProperty('type');
   });
 
   it('should validate menu item with file type', () => {
