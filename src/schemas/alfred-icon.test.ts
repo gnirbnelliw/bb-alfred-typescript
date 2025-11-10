@@ -6,7 +6,6 @@ import { type AlfredIcon, alfredIconSchema, iconFileExists } from './alfred-icon
 vi.mock('fs');
 
 describe('iconFileExists', () => {
-  adsf;
   // By default, mock fs.existsSync to return true
   beforeEach(() => {
     vi.clearAllMocks();
@@ -156,13 +155,13 @@ describe('alfredIconSchema', () => {
   it('should handle various file extensions', () => {
     const extensions = ['icon.png', 'icon.jpg', 'icon.svg', 'icon.ico', 'icon.gif'];
 
-    extensions.forEach((iconPath) => {
+    for (const iconPath of extensions) {
       const validIcon = {
         path: iconPath,
       };
 
       const result = alfredIconSchema.safeParse(validIcon);
       expect(result.success).toBe(true);
-    });
+    }
   });
 });
