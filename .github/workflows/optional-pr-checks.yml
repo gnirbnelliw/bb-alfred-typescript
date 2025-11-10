@@ -1,0 +1,26 @@
+name: Optional PR Checks
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+jobs:
+  test-coverage-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        id: install
+        run: yarn install --immutable
+
+      - name: Run Tests with Coverage
+        if: success() && steps.install.outcome == 'success'
+        continue-on-error: true
+        run: yarn test:coverage
