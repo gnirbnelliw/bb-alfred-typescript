@@ -6,7 +6,6 @@ import { type AlfredIcon, alfredIconSchema, iconFileExists } from './alfred-icon
 vi.mock('fs');
 
 describe('iconFileExists', () => {
-  adsf;
   // By default, mock fs.existsSync to return true
   beforeEach(() => {
     vi.clearAllMocks();

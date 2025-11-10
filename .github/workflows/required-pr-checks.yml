@@ -1,9 +1,5 @@
 name: Required PR Checks
 on:
-  # TODO: Remove push before merging PR
-  push:
-    branches: [ci/add-required-checks]
-  
   pull_request:
     types: [opened, edited, synchronize, reopened]  
 
