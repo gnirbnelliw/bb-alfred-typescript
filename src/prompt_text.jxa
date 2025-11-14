@@ -1,0 +1,63 @@
+function run(argv) {
+  const app = Application.currentApplication();
+  app.includeStandardAdditions = true;
+
+  // Icon for app
+  const iconPath = `dist/img/icons/super-chimp.png`;
+
+  // Store the value of the Alfred arg into `itemType`
+  const itemType = argv[0];
+
+  // Initialize other vars
+  let title = "";
+  let body = "";
+
+  const valid = s => /^[A-Za-z0-9].*$/.test(s.trim());
+
+  while (true) {
+    // ---- First dialog: Title ----
+    while (true) {
+      const r1 = app.displayDialog("💬 Give a title:", {
+        defaultAnswer: title,
+        buttons: ["Cancel", "Next"],
+        defaultButton: "Next",
+        withIcon: Path(iconPath)
+      });
+
+      if (r1.buttonReturned === "Cancel") return "";
+      title = r1.textReturned.trim();
+
+      if (valid(title)) break;
+
+      app.displayAlert("Invalid title", {
+        message: "Please enter at least one alphanumeric character.",
+        as: "critical"
+      });
+    }
+
+    // ---- Third dialog: Body ----
+    while (true) {
+      const r2 = app.displayDialog(`💬 Provide a description for “${title}”:`, {
+        defaultAnswer: body,
+        buttons: ["Cancel", "Back", "Save"],
+        defaultButton: "Save",
+        withIcon: Path(iconPath)
+      });
+
+      const b = r2.buttonReturned;
+      if (b === "Cancel") return "";
+      if (b === "Back") break; // go back to title loop
+
+      body = r2.textReturned.trim();
+
+      if (valid(body)) {
+        return JSON.stringify({ title, body, itemType });
+      }
+
+      app.displayAlert("Invalid body", {
+        message: "Please enter at least one alphanumeric character.",
+        as: "critical"
+      });
+    }
+  }
+}

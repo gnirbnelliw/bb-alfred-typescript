@@ -1,0 +1,55 @@
+function run(argv) {
+  const app = Application.currentApplication();
+  app.includeStandardAdditions = true;
+
+  // 2nd arg = workflow dir, passed from Alfred
+  const alfredDir = argv[1] || "";
+  const iconPath = `dist/img/icons/super-chimp.png`;
+
+  // Simple alphanumeric validation
+  const valid = s => /^[A-Za-z0-9].*$/.test(s.trim());
+
+  // List of choices (you can populate from argv[0] if needed)
+  const choices = ["Quote", "Link", "Text Snippet"];
+  let title = "";
+  let body  = "";
+
+  while (true) {
+    // ---- STEP 1: Choice list ----
+    const selected = app.chooseFromList(choices, {
+      withPrompt: "💬 What's this all about?",
+      defaultItems: [title],
+      withIcon: Path(iconPath),
+      multipleSelectionsAllowed: false,
+      emptySelectionAllowed: false
+    });
+
+    if (!selected) return ""; // user hit Cancel
+    title = selected[0];
+
+    // ---- STEP 2: Body text input ----
+    while (true) {
+      const r2 = app.displayDialog(`💬 Provide a description for “${title}”:`, {
+        defaultAnswer: body,
+        buttons: ["Cancel", "Back", "Save"],
+        defaultButton: "Save",
+        withIcon: Path(iconPath)
+      });
+
+      const button = r2.buttonReturned;
+      if (button === "Cancel") return "";
+      if (button === "Back") break; // return to the choice list
+
+      body = r2.textReturned.trim();
+
+      if (valid(body)) {
+        return JSON.stringify({ title, body });
+      }
+
+      app.displayAlert("Invalid body", {
+        message: "Please enter at least one alphanumeric character.",
+        as: "critical"
+      });
+    }
+  }
+}

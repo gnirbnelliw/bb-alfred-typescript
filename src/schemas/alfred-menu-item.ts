@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { AlfredIcon, alfredIconSchema } from './alfred-icon';
+import { alfredIconSchema } from './alfred-icon';
 
 // Zod schema for Alfred Menu Item.. alfredIconSchema.optional()
 export const alfredMenuItemSchema = z.object({
@@ -7,9 +7,9 @@ export const alfredMenuItemSchema = z.object({
   type: z.enum(['default', 'file', 'file:skipcheck']).optional(),
   title: z.string().min(2),
   subtitle: z.string().optional(),
-  arg: z.string().min(2),
-  autocomplete: z.string(),
+  arg: z.string().min(1),
   match: z.string().optional(),
+  autocomplete: z.string().optional(),
   icon: alfredIconSchema.optional(),
 });
 

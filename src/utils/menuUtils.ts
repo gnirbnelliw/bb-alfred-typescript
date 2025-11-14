@@ -30,21 +30,51 @@ export const alfredMenuItemFromLink = (
     arg: validURL,
     autocomplete: `${text ?? validURL}`,
     icon: {
-      type: 'fileicon' as const,
       path: iconPath ? iconPath : 'dist/img/icons/url.png',
     },
   });
 };
 
-export const alfredMenuItemFromCommandFragment = (cmd: string): AlfredMenuItem => {
+
+export const alfredCommandPropsSchema = z.object({
+  cmd: z.string().min(2),
+  text: z.string().min(5).optional(),
+  commandType: z
+    .string()
+    .default('eval')
+    .transform((val) => {
+      if (!['eval', 'terminal'].includes(val)) return 'eval';
+      return val;
+    }),
+  iconPath: z
+    .string()
+    .optional()
+    .refine((p) => p?.startsWith('dist/img/icons/')),
+});
+
+/**
+ *
+ * @param cmd { string }
+ * @returns
+ */
+export const alfredMenuItemFromCommand = (
+  params: z.input<typeof alfredCommandPropsSchema>,
+): AlfredMenuItem => {
+  const { cmd, text, iconPath } = params;
+  const commandType = `${params.commandType ?? 'eval'}`;
+
+  const arg = `${commandType}:${cmd}`;
+  const subtitlePrefix = commandType === 'eval' ? 'Run command:' : 'Launch terminal:';
+  const subtitle = `${subtitlePrefix} ${text ?? cmd}`;
+
   return alfredMenuItemSchema.parse({
     uid: cmd,
-    type: 'default' as const,
-    title: cmd,
-    arg: cmd,
+    title: text ? text : cmd,
+    subtitle,
+    arg,
     autocomplete: cmd,
     icon: {
-      path: 'dist/img/icons/command.png',
+      path: iconPath ? iconPath : 'dist/img/icons/bash.png',
     },
   });
 };
