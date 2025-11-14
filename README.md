@@ -1,6 +1,9 @@
 # bb-alfred-typescript
 
-TypeScript utilities and schemas for Alfred workflows, providing type-safe menu item generation and validation.
+TypeScript utilities and schemas for Alfred workflows, providing type-safe menu item generation and validation. Can do things like...
+- Open Links
+- Run terminal commands
+- Display markdown files
 
 ## Features
 
@@ -11,7 +14,7 @@ TypeScript utilities and schemas for Alfred workflows, providing type-safe menu 
 
 ## Requirements
 
-- Node.js 24.10+ (ES modules)
+- Node.js `24.10`+ preferred, but `v18.14.0` seems to be OK
 - Yarn
 
 ## Installation

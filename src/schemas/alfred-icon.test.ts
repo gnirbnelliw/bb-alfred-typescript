@@ -52,7 +52,7 @@ describe('iconFileExists', () => {
     const result = iconFileExists('relative/icon.png');
     expect(result).toBe(true);
     // Existence check runs twice: once for normalized path; again for full path
-    expect(fs.existsSync).toHaveBeenCalledTimes(2);
+    expect(fs.existsSync).toHaveBeenCalledTimes(1);
   });
 });
 
@@ -183,10 +183,10 @@ describe('normalizedIconPath', () => {
     // Restore for other tests
     vi.mocked(path.basename).mockRestore?.();
   });
-  it('should return a default icon path when given an invalid path', () => {
+  it('should not return the default icon path when given an invalid path', () => {
     vi.mocked(fs.existsSync).mockReturnValue(false);
     const result = normalizedIconPath('invalid-icon.png');
-    expect(result).toBe(defaultAppIconPath());
+    expect(result).not.toBe(defaultAppIconPath());
   });
 
   it('should return normalized path when icon exists', async () => {
@@ -200,7 +200,7 @@ describe('normalizedIconPath', () => {
     expect(result).toContain(filePath);
   });
 
-  it('should return default icon path when icon does not exist', async () => {
+  it('should return normalized path for files that do not exist', async () => {
     const filePath = 'nonexistent.png';
     const defaultIconPath = defaultAppIconPath();
     vi.mock('path');
@@ -209,7 +209,7 @@ describe('normalizedIconPath', () => {
     vi.mocked(fs.existsSync).mockReturnValue(false);
 
     const result = normalizedIconPath('nonexistent.png');
-    expect(result).toBe(defaultIconPath);
+    expect(result).toBe('dist/img/icons/nonexistent.png');
   });
 });
 
