@@ -2,6 +2,7 @@
   "name": "bb-alfred-typescript",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "license": "MIT",
   "scripts": {
     "test": "vitest",
@@ -11,11 +12,14 @@
     "lint": "biome lint ./src",
     "format": "biome format --write ./src",
     "check": "biome check --write ./src",
-    "build": "yarn empty-dist && npx esbuild src/index.ts --bundle --platform=node --outfile=dist/index.js && yarn sync:assets",
+    "build_server": "npx esbuild src/server.ts --platform=node --format=esm --packages=external --outfile=dist/server.js",
+    "build": "yarn empty-dist && yarn build_server && npx esbuild src/index.ts --bundle --platform=node --outfile=dist/index.js && yarn sync:assets",
     "empty-dist": "rm -rf ./dist && mkdir dist",
     "sync:images": "cp -R ./src/img ./dist/img",
     "sync:markdown": "cp -R ./src/markdown ./dist/markdown",
-    "sync:assets": "yarn sync:images && yarn sync:markdown",
+    "sync:ui": "cp -R ./src/ui ./dist/ui",
+    "sync:jxa": "cp ./src/*.jxa ./dist/",
+    "sync:assets": "yarn sync:images && yarn sync:markdown && yarn sync:jxa && yarn sync:ui",
     "sync:alfred": "yarn build && yarn tsx scripts/sync-alfred.ts"
   },
   "dependencies": {
@@ -24,10 +28,14 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@faker-js/faker": "^10.1.0",
+    "@types/http-server": "^0.12.4",
+    "@types/mime-types": "^3.0.1",
     "@types/node": "^24.10.0",
     "@vitest/coverage-v8": "^4.0.8",
     "esbuild": "^0.27.0",
+    "faker": "^6.6.6",
+    "http-server": "^14.1.1",
+    "mime-types": "^3.0.1",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",
     "vitest": "^4.0.8"
