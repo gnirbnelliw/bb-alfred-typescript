@@ -9,7 +9,7 @@
     "test:coverage": "vitest run --coverage",
     "test:alfred-icons": "vitest src/schemas/alfred-icon.test.ts",
     "test:alfred-menu-items": "vitest src/schemas/alfred-menu-item.test.ts",
-    "lint": "biome lint ./src",
+    "lint": "biome lint --log-level=error ./src",
     "format": "biome format --write ./src",
     "check": "biome check --write ./src",
     "build_server": "npx esbuild src/server.ts --bundle --platform=node --format=cjs --outfile=dist/server.js",
@@ -20,7 +20,7 @@
     "sync:www": "cp -R ./src/www ./dist/www",
     "sync:jxa": "cp ./src/*.jxa ./dist/",
     "sync:assets": "yarn sync:images && yarn sync:markdown && yarn sync:jxa && yarn sync:www",
-    "build": "yarn empty-dist && yarn build_server && npx esbuild src/index.ts --bundle --platform=node --outfile=dist/index.js && yarn sync:www && yarn sync:assets && yarn sync:scripts",
+    "build": "yarn empty-dist && yarn build_server && npx esbuild src/index.ts src/cli.ts --bundle --platform=node --outdir=dist && yarn sync:www && yarn sync:assets && yarn sync:scripts",
     "sync:alfred": "yarn build && yarn tsx scripts/sync-alfred.ts"
   },
   "dependencies": {
@@ -38,10 +38,15 @@
     "@types/mime-types": "^3.0.1",
     "@types/node": "^24.10.0",
     "@vitest/coverage-v8": "^4.0.8",
+    "commander": "^14.0.2",
     "esbuild": "^0.27.0",
     "nodemon": "^3.1.11",
     "tsx": "^4.20.6",
     "typescript": "^5.9.3",
     "vitest": "^4.0.8"
+  },
+  "engines": {
+    "node": "22.14.0",
+    "yarn": ">=1.22"
   }
 }
