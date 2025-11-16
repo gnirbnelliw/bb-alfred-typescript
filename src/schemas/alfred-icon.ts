@@ -1,31 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import { z } from 'zod';
 import { getDirName } from '../utils/nodeUtils';
-
-const __dirname = getDirName();
-
-/**
- * This function must be able to return correct values and be flexible to esm or cjs.
- * @returns { string } Directory name
- */
-/**
- * Returns the current directory path.
- * Works in both ESM and CommonJS builds.
- */
-export const getDirName = (): string => {
-  try {
-    // Works only in ESM builds
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const __filename = fileURLToPath(import.meta.url);
-    return path.dirname(__filename);
-  } catch {
-    // CommonJS fallback
-    return typeof __dirname !== 'undefined' ? __dirname : process.cwd();
-  }
-};
 
 const __dirname = getDirName();
 
