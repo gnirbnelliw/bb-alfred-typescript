@@ -1,10 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import { z } from 'zod';
-import { getDirName } from '../utils/nodeUtils';
-
-const __dirname = getDirName();
 
 // Define folder path as: img/icons/
 export const iconFolderPath = path.join(__dirname, '..', 'dist', 'img', 'icons');
