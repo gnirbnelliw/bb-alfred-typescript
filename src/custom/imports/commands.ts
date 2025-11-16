@@ -61,21 +61,19 @@ export const bashCommands = customFuncInputsSchema.parse([
   },
   {
     title: 'Rebuild and resync Alfred with yarn: sync:alfred',
-    type: 'terminal',
     subtitle: 'Rebuild and resync Alfred with yarn sync:alfred',
-    arg: 'cd /Users/benjaminwillenbring/Desktop/qa/bb-alfred-typescript && yarn test && yarn sync:alfred',
+    arg: 'terminal:cd /Users/benjaminwillenbring/Desktop/qa/bb-alfred-typescript && nvm use && yarn test:coverage && yarn sync:alfred',
   },
   {
     title: 'pwd',
     subtitle: 'Opens the current working directory',
-    arg: 'dir=$(pwd) && open "$dir" && echo $dir',
+    arg: 'terminal:dir=$(pwd) && open "$dir" && echo $dir',
   },
 ]);
 
 // Define function that provides Alfred its {query} arg
 const fn = (arg: z.infer<typeof customFuncInputItemSchema>) => {
-  // Handle both string and object inputs
-  return typeof arg === 'string' ? `eval:${arg}` : `eval:${arg.arg ?? 'echo No arg provided'}`;
+  return typeof arg === 'string' ? arg : (arg.arg ?? '');
 };
 
 const bashCommandMenus = new CustomFunction<string>({

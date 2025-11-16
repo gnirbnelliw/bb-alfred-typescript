@@ -164,22 +164,22 @@ const fn3 = (arg: z.infer<typeof customFuncInputItemSchema>) => {
 const loremMenus = new CustomFunction<string>({
   inputs: customFuncInputsSchema.parse([
     {
-      title: 'Lorem Ipsum Standard',
+      title: 'Lorem Ipsum: Standard',
       subtitle: `${loremStandard.substring(0, 60)}...`,
       arg: loremStandard,
     },
     {
-      title: 'Lorem Ipsum Fox',
+      title: 'Lorem Ipsum: Fox',
       subtitle: loremFox,
       arg: loremFox,
     },
     {
-      title: 'Gettysburg Address',
+      title: 'Lorem Ipsum: Gettysburg Address',
       subtitle: `${loremGettysburg.substring(0, 60)}...`,
       arg: loremGettysburg,
     },
     {
-      title: 'Normandy Invasion Speech by Eisenhower',
+      title: 'Lorem Ipsum: Normandy Invasion Speech by Eisenhower',
       subtitle: `${loremNormandy.substring(0, 60)}...`,
       arg: loremNormandy,
     },
