@@ -1,10 +1,14 @@
 import fs from 'fs';
+import { exec } from 'node:child_process';
 import { z } from 'zod';
 import {
   type WorkflowVariable,
   workflowConfigSchema,
   type workflowVariableSchema,
 } from '../schemas/workflow-config';
+
+import { Command } from 'commander';
+import { cliSchema } from '../schemas/cli-schema';
 
 export const getDefaultWorkflowConfig = (): ReturnType<typeof workflowConfigSchema.parse> => {
   return workflowConfigSchema.parse({
@@ -80,7 +84,59 @@ export const loadWorkflowVariables = (): z.infer<typeof rawVariablesSchema> | un
   }
   return undefined;
 };
-// Code goes inside anonymous async function, and is executed immediately
-(async () => {
-  // Stuff here.
-})();
+
+/**
+ *
+ * @param token { string }
+ * @returns { boolean } Whether the provided GitHub token is valid.
+ */
+export const isValidGithubToken = (token: string | undefined): boolean => {
+  // GitHub token length varies, but generally >= 40 chars and start with "ghp_"
+  return undefined !== token && token.trim().length >= 40 && token.startsWith('ghp_');
+};
+
+/**
+ *
+ * @param key { string }
+ * @returns { boolean } Whether the provided OpenAI API key is valid.
+ */
+export const isValidOpenAIKey = (key: string | undefined): boolean => {
+  // API key length varis, but generally exceed 40 chars and start with "sk-"
+  return undefined !== key && key.trim().length >= 40 && key.startsWith('sk-');
+};
+
+/**
+ *
+ * @param key { string }
+ * @returns { boolean } Whether the provided API key is valid.
+ */
+export const isValidAPIKey = (key: string | undefined): boolean => {
+  return undefined !== key && key.trim().length >= 20;
+};
+
+export const getCLIParams = (): z.infer<typeof cliSchema> => {
+  const program = new Command();
+  program.option('--action <string>', 'CLI action to perform', 'serverStatus');
+  program.option('--argument <string>', 'Argument for the action', '');
+
+  // Allow for help text
+  const sep = '-'.repeat(50);
+  const codeSamples = [
+    'yarn tsx src/cli.ts --action navigate --argument "home"',
+    'yarn tsx src/cli.ts --action notify --argument "Hey there"',
+    'yarn tsx src/cli.ts --action terminalCommand --argument "ls -la"',
+    'yarn tsx src/cli.ts --action serverStatus',
+    'yarn tsx src/cli.ts --action getConfig',
+    'yarn tsx src/cli.ts --action nodeJSCode --nodeJSCode "console.log(\'Hello from CLI\')"',
+  ];
+  program.on('--help', () => {
+    console.log('');
+    console.log(sep);
+    console.log('💡 Example call:');
+    console.log(codeSamples.map((sample) => `   ${sample}`).join('\n'));
+    console.log(sep);
+  });
+
+  program.parse(process.argv);
+  return cliSchema.parse(program.opts());
+};

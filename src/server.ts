@@ -1,9 +1,7 @@
+import { exec } from 'node:child_process';
 import * as fs from 'node:fs';
-// import net from 'net';
 import * as net from 'node:net'; // ✅ ESM-safe native import
-// import path from 'path';
 import * as path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { serve } from '@hono/node-server';
 import { serveStatic } from '@hono/node-server/serve-static';
 import { Eta } from 'eta';
@@ -22,8 +20,6 @@ const HERE = __dirname;
 const DIST_WWW = path.join(HERE, 'www');
 const SRC_WWW = path.join(HERE, '..', 'src', 'www');
 const WWW_ROOT = fs.existsSync(DIST_WWW) ? DIST_WWW : SRC_WWW;
-
-console.log('📂 Serving from:', WWW_ROOT);
 
 // ----------------------------------------------------------------------------
 // Eta
@@ -47,7 +43,7 @@ function renderPage(name: string, data: Record<string, unknown> = {}) {
 // ----------------------------------------------------------------------------
 const app = new Hono();
 
-// Pre-populate...
+// Pre-populate with workflow variables where appropriate...
 const vars = loadWorkflowVariables()?.variables || {};
 
 // Dynamic pages
@@ -56,10 +52,6 @@ app.get('/home', (c) => c.html(renderPage('home', { ...vars, name: 'Workflow Con
 app.get('/about', (c) => c.html(renderPage('about', { name: 'About' })));
 // app.get('/today', (c) => c.html(renderPage('today', { name: 'Today' })));
 app.get('/help', (c) => c.html(renderPage('help', { name: 'Today' })));
-
-// ----------------------------------------------------------------------------
-// Hot reloading (dev only)
-// ----------------------------------------------------------------------------
 
 // ----------------------------------------------------------------------------
 // Static assets
@@ -80,19 +72,43 @@ app.use('*', (c, next) => {
 });
 
 // ----------------------------------------------------------------------------
-// Start server unless it's already running
+// Server Functions
 // ----------------------------------------------------------------------------
-function serverIsRunning(port: number, host: string): Promise<boolean> {
+/**
+ *
+ * @param port { number } Port number to run the server on.
+ * @param host { string } Hostname to run the server on.
+ * @returns { Promise<boolean> } Whether the server is running on the given port and host. @see {@link startServer}
+ */
+export function serverIsRunning(port: number = PORT, host: string = HOST): Promise<boolean> {
+  // Return whether or not the server is running on the given port at the host.
   return new Promise((resolve) => {
-    const s = net.connect({ port, host }, () => {
-      s.end();
+    const socket = new net.Socket();
+
+    socket.setTimeout(1000); // 1 second timeout
+
+    socket.on('connect', () => {
+      socket.destroy();
       resolve(true);
     });
-    s.on('error', () => resolve(false));
+
+    socket.on('error', () => {
+      resolve(false);
+    });
+
+    socket.on('timeout', () => {
+      resolve(false);
+    });
+
+    socket.connect(port, host);
   });
 }
 
-async function startServer() {
+/**
+ * Starts the Hono server if not already running. @see {@link serverIsRunning}
+ * @returns { Promise<void> }
+ */
+export async function startServer(): Promise<void> {
   const running = await serverIsRunning(PORT, HOST);
   if (running) {
     console.log(`🔥 Already running at http://${HOST}:${PORT}`);
@@ -105,4 +121,25 @@ async function startServer() {
   });
 }
 
-startServer();
+export const killServer = async (port: number = PORT, host: string = HOST): Promise<void> => {
+  // If it's running do nothing
+  const running = await serverIsRunning(port, host);
+  if (!running) {
+    console.log(`🛑 Server not running at http://${host}:${port}`);
+    return;
+  }
+  // Execute this command: `lsof -ti :${PORT} | xargs kill -9`
+  const cmd = `lsof -ti :${port} | xargs kill -9`;
+  exec(cmd, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`Error killing server: ${error.message}`);
+      return;
+    }
+    if (stderr) {
+      console.error(`Stderr while killing server: ${stderr}`);
+      return;
+    }
+    console.log(`✅ Killed server running at http://${host}:${port}`);
+  });
+};
+
