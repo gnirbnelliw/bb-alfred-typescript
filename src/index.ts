@@ -55,6 +55,15 @@ const getVariables = () => {
       icon: { path: 'dist/img/icons/gear.png' },
     });
 
+    const m5 = alfredMenuItemFromParams({
+      uid: 'custom-5',
+      title: 'Notify special',
+      subtitle: 'Notify by calling aflred run action',
+      arg: 'eval:node dist/cli.js --action notify --argument "Special notification from Alfred!"',
+      autocomplete: 'notify special alfred',
+      icon: { path: 'dist/img/icons/gear.png' },
+    });
+
     const menuItems = alfredMenuItemsSchema.parse({
       items: [
         ...bashCommandMenus,
@@ -64,7 +73,7 @@ const getVariables = () => {
         ...unicodeMenus,
         ...mermaidMenus,
         ...loremMenus,
-        ...[m1, m2, m3, m4],
+        ...[m1, m2, m3, m4, m5],
       ],
       variables: getVariables(),
     });
