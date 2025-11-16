@@ -1,7 +1,6 @@
 import type { z } from 'zod';
 import { CustomFunction } from '..';
 import { type customFuncInputItemSchema, customFuncInputsSchema } from '../';
-import { getLastNPRs } from '../functions/git';
 
 export const bashCommands = customFuncInputsSchema.parse([
   {
@@ -40,11 +39,6 @@ export const bashCommands = customFuncInputsSchema.parse([
     arg: 'node -v',
   },
   {
-    title: 'Prints node version and path and other stuff',
-    subtitle: 'Troubleshooting command to print node version, path, and nvm versions',
-    arg: 'which node && echo $PATH && ls -l ~/.nvm/versions/node',
-  },
-  {
     title: 'Prints yarn version',
     subtitle: 'Prints the current Yarn version',
     arg: 'yarn -v',
@@ -63,7 +57,7 @@ export const bashCommands = customFuncInputsSchema.parse([
     title: 'Rebuild and resync Alfred with yarn: sync:alfred',
     type: 'terminal',
     subtitle: 'Rebuild and resync Alfred with yarn sync:alfred',
-    arg: 'cd /Users/benjaminwillenbring/Desktop/qa/bb-alfred-typescript && yarn test && yarn sync:alfred',
+    arg: 'cd /Users/benjaminwillenbring/Desktop/qa/bb-alfred-typescript && yarn sync:alfred',
   },
   {
     title: 'pwd',

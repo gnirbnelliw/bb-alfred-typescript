@@ -6,6 +6,29 @@ import { getDirName } from '../utils/nodeUtils';
 
 const __dirname = getDirName();
 
+/**
+ * This function must be able to return correct values and be flexible to esm or cjs.
+ * @returns { string } Directory name
+ */
+/**
+ * Returns the current directory path.
+ * Works in both ESM and CommonJS builds.
+ */
+export const getDirName = (): string => {
+  try {
+    // Works only in ESM builds
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const __filename = fileURLToPath(import.meta.url);
+    return path.dirname(__filename);
+  } catch {
+    // CommonJS fallback
+    return typeof __dirname !== 'undefined' ? __dirname : process.cwd();
+  }
+};
+
+const __dirname = getDirName();
+
 // Define folder path as: img/icons/
 export const iconFolderPath = path.join(__dirname, '..', 'dist', 'img', 'icons');
 

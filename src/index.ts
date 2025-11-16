@@ -1,13 +1,11 @@
 import type { z } from 'zod';
-import { getLastNPRs } from './custom/functions/git';
 import { bashCommandMenus } from './custom/imports/commands';
 import { emojiMenus } from './custom/imports/emojis';
 import { mermaidMenus } from './custom/imports/mermaid';
 import { notionMenus } from './custom/imports/notionDocs';
-import { loremMenus, militaryOrderMenus, unicodeMenus } from './custom/imports/textSnippets';
+import { militaryOrderMenus, unicodeMenus } from './custom/imports/textSnippets';
+// import { militaryOrderMenus, unicodeArrowMenus } from './custom/imports/textSnippets';
 import { alfredMenuItemsSchema, type alfredVariableSchema } from './schemas/alfred-menu-item';
-import { alfredMenuItemFromParams } from './utils/menuUtils';
-import { config, getConfiguredVariables, loadWorkflowVariables } from './utils/workflowUtils';
 
 // TODO: Is this really necessary?
 const getVariables = () => {
@@ -55,7 +53,25 @@ const getVariables = () => {
       icon: { path: 'dist/img/icons/gear.png' },
     });
 
-    const menuItems = alfredMenuItemsSchema.parse({
+try {
+  const menuItems = alfredMenuItemsSchema.parse({
+    items: [
+      ...bashCommandMenus,
+      ...emojiMenus,
+      ...notionMenus,
+      ...militaryOrderMenus,
+      ...unicodeMenus,
+      ...mermaidMenus,
+    ],
+    variables: getVariables(),
+  });
+
+  // Output JSON for Alfred
+  console.log(JSON.stringify(menuItems, null, 2));
+} catch (error) {
+  // Output error in Alfred-compatible format
+  console.log(
+    JSON.stringify({
       items: [
         ...bashCommandMenus,
         ...emojiMenus,

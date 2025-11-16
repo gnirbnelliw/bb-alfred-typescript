@@ -2,14 +2,6 @@ import type { z } from 'zod';
 import { CustomFunction } from '..';
 import { type customFuncInputItemSchema, customFuncInputsSchema } from '../';
 
-const loremStandard =
-  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus tincidunt tortor ac rutrum efficitur. Duis a condimentum ex. Aenean ac gravida erat. Nulla tristique, est eu hendrerit luctus, diam urna hendrerit ante, id maximus elit urna sit amet eros. Suspendisse vitae purus leo. Donec id tempor ligula, sed vestibulum tortor. Etiam sapien libero, rutrum eget tincidunt eu, malesuada venenatis sapien. Proin quis ipsum vitae metus egestas placerat. Pellentesque in turpis euismod, finibus dolor vitae, placerat nibh. Pellentesque at aliquet turpis, non varius nulla.';
-
-const loremFox = 'The quick brown fox jumps over the lazy dog';
-
-const loremGettysburg =
-  'Four score and seven years ago our fathers brought forth on this continent, a new nation, conceived in Liberty, and dedicated to the proposition that all men are created equal. Now we are engaged in a great civil war, testing whether that nation, or any nation so conceived and so dedicated, can long endure. We are met on a great battle-field of that war. We have come to dedicate a portion of that field, as a final resting place for those who here gave their lives that that nation might live. It is altogether fitting and proper that we should do this. But, in a larger sense, we can not dedicate -- we can not consecrate -- we can not hallow -- this ground. The brave men, living and dead, who struggled here, have consecrated it, far above our poor power to add or detract. The world will little note, nor long remember what we say here, but it can never forget what they did here. It is for us the living, rather, to be dedicated here to the unfinished work which they who fought here have thus far so nobly advanced. It is rather for us to be here dedicated to the great task remaining before us -- that from these honored dead we take increased devotion to that cause for which they gave the last full measure of devotion -- that we here highly resolve that these dead shall not have died in vain -- that this nation, under God, shall have a new birth of freedom -- and that government of the people, by the people, for the people, shall not perish from the earth.';
-
 const unicodeItems = customFuncInputsSchema.parse([
   {
     title: 'Unicode: Up Arrow',
@@ -154,29 +146,4 @@ const militaryOrderMenus = new CustomFunction<string>({
   iconPath: 'dist/img/icons/dod.png',
 }).menus(fn2);
 
-const fn3 = (arg: z.infer<typeof customFuncInputItemSchema>) => {
-  return typeof arg === 'string' ? arg : (arg.arg ?? '');
-};
-
-const loremMenus = new CustomFunction<string>({
-  inputs: customFuncInputsSchema.parse([
-    {
-      title: 'Lorem Ipsum Standard',
-      subtitle: `${loremStandard.substring(0, 60)}...`,
-      arg: loremStandard,
-    },
-    {
-      title: 'Lorem Ipsum Fox',
-      subtitle: loremFox,
-      arg: loremFox,
-    },
-    {
-      title: 'Gettysburg Address',
-      subtitle: `${loremGettysburg.substring(0, 60)}...`,
-      arg: loremGettysburg,
-    },
-  ]),
-  iconPath: 'dist/img/icons/lorem.png',
-}).menus(fn3);
-
-export { militaryOrderMenus, unicodeMenus, loremMenus };
+export { militaryOrderMenus, unicodeMenus };
