@@ -1,0 +1,8 @@
+<div data-id="header" class="p-3 pb-0 mb-3">
+  <div class="branding position-absolute"></div>
+  <div class="nav">
+    <div class="display-6"><%~ it.name || 'Workflow Config' %></div>
+  </div>
+  <!-- top nav -->
+  <%~ include("topNav.eta", { GITHUB_TOKEN: it.GITHUB_TOKEN }) %>
+</div>

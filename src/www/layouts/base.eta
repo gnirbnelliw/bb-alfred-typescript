@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css" />
+
+    <meta charset="utf-8" />
+    <title><%= it.title || 'Alfred Workflow Utilities v1' %></title>
+
+    <!-- Your own CSS -->
+    <link rel="stylesheet" href="/assets/css/custom.css" />
+
+    <!-- Global JS -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Code here
+        const btn = document.getElementById("foo");
+        if (btn) {
+          btn.addEventListener("click", async function () {
+            // Await a fetch request to jsonFiles/sample.json
+            const resp = await fetch("assets/sample.json");
+            const data = await resp.json();
+            alert(JSON.stringify(data, undefined, 2));
+          });
+        }
+      });
+    </script>
+  </head>
+
+  <body>
+    <div id="body" class="row m-1">
+      <%~ it.header %> <%~ it.body %> <%~ it.footer %>
+    </div>
+
+    <!-- Bootstrap JS (correct location) -->
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

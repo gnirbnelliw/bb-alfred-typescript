@@ -1,0 +1,156 @@
+<form id="settings-form">
+  <!-- Github -->
+
+  <div class="row">
+    <label data-id="GITHUB_TOKEN" class="h5 form-label">GitHub Token</label>
+    <div class="col-9">
+      <div class="mb-3">
+        <input
+          class="form-control"
+          type="password"
+          name="GITHUB_TOKEN"
+          value="<%= it.GITHUB_TOKEN || '' %>"
+        />
+      </div>
+    </div>
+    <div data-id="GITHUB_TOKEN_REASON" class="col-3">&nbsp;</div>
+  </div>
+
+  <!-- Linear API AI -->
+  <div class="row">
+    <label data-id="LINEAR_API_KEY" class="h5 form-label">Linear API Key</label>
+    <div class="col-9">
+      <div class="mb-3">
+        <input
+          class="form-control"
+          type="password"
+          name="LINEAR_API_KEY"
+          value="<%= it.LINEAR_API_KEY || '' %>"
+        />
+      </div>
+    </div>
+    <div data-id="LINEAR_API_KEY_REASON" class="col-3">&nbsp;</div>
+  </div>
+
+  <!-- Open AI -->
+  <div class="row">
+    <label data-id="OPENAI_KEY" class="h5 form-label">OpenAI Key</label>
+    <div class="col-9">
+      <div class="mb-3">
+        <input
+          class="form-control"
+          type="password"
+          name="OPENAI_KEY"
+          value="<%= it.OPENAI_KEY || '' %>"
+        />
+      </div>
+    </div>
+    <div data-id="OPENAI_KEY_REASON" class="col-3">&nbsp;</div>
+  </div>
+
+  <!-- Testmo  -->
+  <div class="row">
+    <label data-id="TESTMO_API_KEY" class="h5 form-label">Testmo API Key</label>
+    <div class="col-9">
+      <div class="mb-3">
+        <input
+          class="form-control"
+          type="password"
+          name="TESTMO_API_KEY"
+          value="<%= it.TESTMO_API_KEY || '' %>"
+        />
+      </div>
+    </div>
+    <div data-id="TESTMO_API_KEY_REASON" class="col-3">&nbsp;</div>
+  </div>
+
+  <!-- Notion -->
+  <div class="row">
+    <label data-id="NOTION_API_KEY" class="h5 form-label">Notion API Key</label>
+    <div class="col-9">
+      <div class="mb-3">
+        <input
+          class="form-control"
+          type="password"
+          name="NOTION_API_KEY"
+          value="<%= it.NOTION_API_KEY || '' %>"
+        />
+      </div>
+    </div>
+    <div data-id="NOTION_API_KEY_REASON" class="col-3">&nbsp;</div>
+  </div>
+
+  <!-- <input type="submit" value="Save" /> -->
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+<!-- Handle Form Submission -->
+<script>
+  function validateForm(data) {
+    const reasons = {};
+    // Add any validation logic here if needed
+    const {
+      GITHUB_TOKEN,
+      LINEAR_API_KEY,
+      OPENAI_KEY,
+      TESTMO_API_KEY,
+      NOTION_API_KEY,
+    } = data;
+
+    if (GITHUB_TOKEN.trim().length < 40)
+      reasons["GITHUB_TOKEN"] = "Github token must be at least 40 characters.";
+
+    if (LINEAR_API_KEY.trim().length < 20)
+      reasons["LINEAR_API_KEY"] =
+        "Linear API key must be at least 20 characters.";
+
+    if (OPENAI_KEY.trim().length < 20)
+      reasons["OPENAI_KEY"] = "OpenAI key must be at least 20 characters.";
+    if (TESTMO_API_KEY.trim().length < 20)
+      reasons["TESTMO_API_KEY"] =
+        "Testmo API key must be at least 20 characters.";
+    if (NOTION_API_KEY.trim().length < 20)
+      reasons["NOTION_API_KEY"] =
+        "Notion API key must be at least 20 characters.";
+    return Object.keys(reasons).length === 0 ? true : reasons;
+  }
+  document
+    .getElementById("settings-form")
+    .addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const data = {};
+      const formData = new FormData(e.target);
+      formData.forEach((val, key) => (data[key] = val));
+
+      const isValid = validateForm(data);
+      console.log(`🔥 Form valid: ${JSON.stringify(isValid, undefined, 2)}`);
+      console.log("-".repeat(40));
+
+      if (isValid !== true) {
+        console.log("it is not true...");
+        for (const [key, message] of Object.entries(isValid)) {
+          console.log(`⚠️ ${key}: ${message}`);
+          const label = document.querySelector(`label[data-id="${key}"]`);
+          const reason = document.querySelector(`div[data-id="${key}_REASON"]`);
+          if (reason) {
+            reason.textContent = message;
+            reason.style.color = "red";
+          }
+          if (label) {
+            label.style.color = "red";
+          }
+        }
+        return;
+      }
+
+      const encoded = encodeURIComponent(JSON.stringify(data));
+
+      // IMPORTANT. IGNORE FUCKING CHATGPT. MOTHERFUCKER.
+      const url = `alfred://runtrigger/com.ben-willenbring.ts/save-vars/?argument=${encoded}`;
+
+      alert(JSON.stringify(data));
+
+      // window.location.href = url;
+    });
+</script>

@@ -1,0 +1,54 @@
+<div class="p-2">
+  <!-- JS Handler for form submission -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const form = document.getElementById("addLinkForm");
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const name = document.getElementById("linkName").value;
+        const type = document.getElementById("linkType").value;
+        const description = document.getElementById("linkDescription").value;
+
+        alert(
+          `Link Added:\nName: ${name}\nType: ${type}\nDescription: ${description}`
+        );
+
+        // Clear form
+        form.reset();
+      });
+    });
+  </script>
+
+  <form id="addLinkForm">
+    <!-- Display Name with eta partial var  -->
+    <div class="mb-3">
+      <label for="linkName" class="form-label"
+        >Title <%= `& ${it.option}` || 'foo' %></label
+      >
+      <input type="text" class="form-control" id="linkName" required />
+    </div>
+
+    <!-- Type -->
+    <div class="mb-3">
+      <label for="linkType" class="form-label">Link Type</label>
+      <select class="form-select" id="linkType" required>
+        <option value="Link">Link</option>
+        <option value="Text Snippet">Text Snippet</option>
+        <option value="Terminal Command">Terminal Command</option>
+      </select>
+    </div>
+
+    <!-- Body-->
+    <div class="mb-3">
+      <label for="linkDescription" class="form-label">Link Description</label>
+      <textarea
+        class="form-control"
+        id="linkDescription"
+        rows="3"
+        required
+      ></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Add Link</button>
+  </form>
+</div>

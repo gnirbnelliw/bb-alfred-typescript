@@ -1,0 +1,6 @@
+<div class="container">
+  <h1>Hello <%= it.name %>!</h1>
+
+  <!-- About -->
+  <div class="w-25">Yo beotch! Here's about me!!!</div>
+</div>

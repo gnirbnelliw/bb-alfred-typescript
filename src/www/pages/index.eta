@@ -1,0 +1,4 @@
+<div class="container">
+    <h1>Index</h1>
+    <div id="foo" class="btn btn-primary">Click me</div>
+</div>

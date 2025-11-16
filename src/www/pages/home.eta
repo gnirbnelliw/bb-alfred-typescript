@@ -1,0 +1,8 @@
+<div class="container">
+  <!-- Add Link Form -->
+
+  <div class="container">
+    <%~ include("../partials/captureVars.eta", { GITHUB_TOKEN: it.GITHUB_TOKEN
+    }) %>
+  </div>
+</div>
