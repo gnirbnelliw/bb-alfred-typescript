@@ -2,5 +2,39 @@
   <h1>Hello <%= it.name %>!</h1>
 
   <!-- About -->
-  <div class="w-25">Yo beotch! Here's about me!!!</div>
+  <dov class="container">
+    <h2>CLI</h2>
+    <ul>
+      <li>Risk Analysis</li>
+      <ul>
+        <li>By PR</li>
+        <li>By Release</li>
+        <li>By Commit Diff</li>
+      </ul>
+      <li>Release Branches</li>
+        <ul>
+          <li>Get last {n} PRs</li>
+          <li>Get <code>release notes for</code> {PR #}</li>
+        </ul>
+      <li>Releases</li>
+      <ul>
+        <li>Release report (basic date range)</li>
+        <li>Release details for...</li>
+      </ul>
+      <li>Deployments</li>
+      <ul>
+        <li>Get last {n} deployments</li>
+        <li>Get deployment details for...</li>
+    </ul>
+    <li>✅ Snippets</li>
+    <ul>
+      <li>Lorem Ipsum</li>
+      <li>Military Orders</li>
+      <li>Emojis</li>
+    </ul>
+    <li>✅ URLs</li>
+    <ul>
+      <li>Notion...</li>
+    </ul>
+  </dov>
 </div>
