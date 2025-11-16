@@ -1,0 +1,97 @@
+/* Fonts */
+@font-face {
+  font-family: "Space Grotesk";
+  src: url("/assets/fonts/Space_Grotesk/SpaceGrotesk-Light.woff2") format("woff2");
+  font-weight: 100;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Space Grotesk";
+  src: url("/assets/fonts/Space_Grotesk/SpaceGrotesk-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* Make font-face declarations for: Inter-Thin.woff2, Inter-Regular.woff2, and Inter-Bold.woff2 */
+@font-face {
+  font-family: "Inter";
+  src: url("/assets/fonts/Inter/Inter-Thin.woff2") format("woff2");
+  font-weight: 100;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("/assets/fonts/Inter/Inter-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("/assets/fonts/Inter/Inter-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* Header: note the custom font */
+
+[data-id="header"] {
+  font-family: "Space Grotesk", sans-serif;
+  background-color: #33414b;
+  color: #ffffff;
+  border-radius: 5px;
+}
+
+[data-id="footer"] {
+  display: none;
+}
+/* Header fonts */
+h1,
+.h1,
+h2,
+.h2,
+h3,
+.h3,
+h4,
+.h4,
+h5,
+.h5,
+h6,
+.h6 {
+  font-family: "Space Grotesk", sans-serif;
+  color: #33414b;
+  font-weight: 700;
+}
+
+[data-id="header"] {
+  position: relative;
+  padding-left: 105px !important;
+  min-height: 90px;
+}
+
+.branding {
+  background: url(/assets/img/logo.png) no-repeat center;
+  background-size: cover;
+  height: 50px;
+  width: 50px;
+  display: inline-block;
+  top: 20px;
+  left: 20px;
+}
+
+.topNav {
+  border: 1px solid pink;
+}
+
+/*  
+Color Palette:
+
+  Core Blue: #019EFF;
+  Core White: #FFFFFF;
+  Grey 1: #E1E4E9;
+  Grey 2: #CDD2D7;
+  Grey 3: #33414B;
+  Grey 4: #191919;
+*/
