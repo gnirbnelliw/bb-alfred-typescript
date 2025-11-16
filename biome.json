@@ -36,5 +36,22 @@
   },
   "files": {
     "ignore": ["dist", "node_modules", "coverage", "src/www/assets"]
-  }
+  },
+  "overrides": [
+    {
+      "include": ["**/*.test.ts", "**/*.spec.ts"],
+      "linter": {
+        "enabled": true,
+        "rules": {
+          "suspicious": {
+            "noExplicitAny": "off",
+            "noFocusedTests": "error"
+          },
+          "performance": {
+            "noDelete": "off"
+          }
+        }
+      }
+    }
+  ]
 }
