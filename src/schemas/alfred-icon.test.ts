@@ -8,7 +8,6 @@ import {
   iconFolderPath,
   normalizedIconPath,
 } from './alfred-icon';
-// import { defaultAppIconPath, normalizedIconPath } from './alfred-icon';
 
 // Mock the fs module
 vi.mock('fs');
@@ -224,7 +223,6 @@ describe('defaultAppIcon', () => {
   });
 
   it('should return default app icon', async () => {
-    const { defaultAppIcon } = await import('./alfred-icon');
     const result = defaultAppIcon();
     expect(result).toHaveProperty('path');
     expect(result.path).toContain('alfred.png');

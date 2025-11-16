@@ -13,6 +13,22 @@ export const alfredLinkPropsSchema = z.object({
 });
 
 
+// Create a generic alfredMenuItem function that takes a params object and returns an AlfredMenuItem
+export const alfredMenuItemFromParams = (
+  params: z.infer<typeof alfredMenuItemSchema>,
+): AlfredMenuItem => {
+  const { uid, title, subtitle, arg, autocomplete, icon } = params;
+  return alfredMenuItemSchema.parse({
+    uid,
+    title,
+    subtitle: params.subtitle ?? '',
+    arg,
+    autocomplete: autocomplete ?? title,
+    icon: icon ?? { path: 'dist/img/icons/alfred.png' },
+  });
+};
+
+
 /**
  * Generates an Alfred Menu Item from a given link.
  * @param link { string }
