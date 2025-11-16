@@ -58,4 +58,3 @@ export const defaultAppIcon = (): AlfredIcon => {
     path: defaultAppIconPath(),
   });
 };
-

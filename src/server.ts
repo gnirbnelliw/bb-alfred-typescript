@@ -82,7 +82,7 @@ app.use('*', (c, next) => {
 // ----------------------------------------------------------------------------
 // Start server unless it's already running
 // ----------------------------------------------------------------------------
-function serverIsRunning(port: number, host: string): Promise<boolean> {
+async function serverIsRunning(port: number, host: string): Promise<boolean> {
   return new Promise((resolve) => {
     const s = net.connect({ port, host }, () => {
       s.end();

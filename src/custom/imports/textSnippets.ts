@@ -146,4 +146,45 @@ const militaryOrderMenus = new CustomFunction<string>({
   iconPath: 'dist/img/icons/dod.png',
 }).menus(fn2);
 
-export { militaryOrderMenus, unicodeMenus };
+const loremStandard =
+  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus tincidunt tortor ac rutrum efficitur. Duis a condimentum ex. Aenean ac gravida erat. Nulla tristique, est eu hendrerit luctus, diam urna hendrerit ante, id maximus elit urna sit amet eros. Suspendisse vitae purus leo. Donec id tempor ligula, sed vestibulum tortor. Etiam sapien libero, rutrum eget tincidunt eu, malesuada venenatis sapien. Proin quis ipsum vitae metus egestas placerat. Pellentesque in turpis euismod, finibus dolor vitae, placerat nibh. Pellentesque at aliquet turpis, non varius nulla.';
+
+const loremGettysburg =
+  'Four score and seven years ago our fathers brought forth on this continent, a new nation, conceived in Liberty, and dedicated to the proposition that all men are created equal. Now we are engaged in a great civil war, testing whether that nation, or any nation so conceived and so dedicated, can long endure. We are met on a great battle-field of that war. We have come to dedicate a portion of that field, as a final resting place for those who here gave their lives that that nation might live. It is altogether fitting and proper that we should do this. But, in a larger sense, we can not dedicate -- we can not consecrate -- we can not hallow -- this ground. The brave men, living and dead, who struggled here, have consecrated it, far above our poor power to add or detract. The world will little note, nor long remember what we say here, but it can never forget what they did here. It is for us the living, rather, to be dedicated here to the unfinished work which they who fought here have thus far so nobly advanced. It is rather for us to be here dedicated to the great task remaining before us -- that from these honored dead we take increased devotion to that cause for which they gave the last full measure of devotion -- that we here highly resolve that these dead shall not have died in vain -- that this nation, under God, shall have a new birth of freedom -- and that government of the people, by the people, for the people, shall not perish from the earth.';
+
+const loremFox = 'The quick brown fox jumps over the lazy dog';
+
+const loremNormandy =
+  'The Allied invasion of Normandy, codenamed Operation Overlord, marks a pivotal moment in our campaign to liberate Europe from Nazi control. This mission is to establish a strong foothold on the beaches of Normandy, with American forces taking the lead on Utah and Omaha beaches, supported by our British and Canadian allies on Gold, Juno, and Sword. The objective is to secure these beaches, advance inland, and link up with airborne divisions that will have dropped behind enemy lines to seize key strategic points, including Carentan, Saint-Lô, and Caen. The German forces we face are entrenched and well-prepared, having fortified the coast with the formidable Atlantic Wall. However, through extensive deception efforts under Operation Bodyguard, we believe the enemy remains uncertain of the exact location and timing of our assault, likely expecting it at Pas-de-Calais or even Norway. Once we secure the beachheads, we anticipate swift enemy counterattacks; our ability to hold these positions and repel these attacks will be crucial. The risks are high, and the fight ahead will be fierce, but this operation is essential for the liberation of Europe. Our success here will turn the tide of the war, and each of you, as part of the vanguard of freedom, carries the hopes and prayers of millions. The responsibility is immense, but our cause is just, and victory in Normandy will pave the way for the ultimate defeat of tyranny.';
+
+const fn3 = (arg: z.infer<typeof customFuncInputItemSchema>) => {
+  return typeof arg === 'string' ? arg : (arg.arg ?? '');
+};
+
+const loremMenus = new CustomFunction<string>({
+  inputs: customFuncInputsSchema.parse([
+    {
+      title: 'Lorem Ipsum Standard',
+      subtitle: 'Standard Lorem Ipsum placeholder text',
+      arg: loremStandard,
+    },
+    {
+      title: 'Gettysburg Address',
+      subtitle: 'Famous speech by Abraham Lincoln',
+      arg: loremGettysburg,
+    },
+    {
+      title: 'The Quick Brown Fox',
+      subtitle: 'A pangram containing every letter of the alphabet',
+      arg: loremFox,
+    },
+    {
+      title: 'Normandy Invasion Briefing',
+      subtitle: 'Overview of Operation Overlord during WWII',
+      arg: loremNormandy,
+    },
+  ]),
+  iconPath: 'dist/img/icons/lorem.png',
+}).menus(fn3);
+
+export { militaryOrderMenus, unicodeMenus, loremMenus };

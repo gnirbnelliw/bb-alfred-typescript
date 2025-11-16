@@ -19,7 +19,7 @@
     "sync:scripts": "cp -R ./scripts ./dist/scripts",
     "sync:images": "cp -R ./src/img ./dist/img",
     "sync:markdown": "cp -R ./src/markdown ./dist/markdown",
-    "sync:ui": "cp -R ./src/ui ./dist/ui",
+    "sync:ui": "cp -R ./src/www ./dist/www",
     "sync:jxa": "cp ./src/*.jxa ./dist/",
     "sync:assets": "yarn sync:images && yarn sync:markdown && yarn sync:jxa && yarn sync:ui",
     "sync:alfred": "yarn build && yarn tsx scripts/sync-alfred.ts"
