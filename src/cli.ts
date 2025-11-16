@@ -40,9 +40,9 @@ const runAlfred = (action: z.infer<typeof cliActionSchema>, argument?: string): 
   // Get the cli parameters
   const cliParams = getCLIParams();
 
-  // ------------------------------------------------------
-  // Action: serverStatus
   if (cliParams.action === 'server-status') {
+    // ------------------------------------------------------
+    // Action: serverStatus
     // Print the status
     const status = await serverIsRunning();
     console.log(status);
@@ -50,7 +50,7 @@ const runAlfred = (action: z.infer<typeof cliActionSchema>, argument?: string): 
 
   // ------------------------------------------------------
   // Action: navigate
-  else if (cliParams.action === 'home') {
+  else if (cliParams.action === 'home' || cliParams.action === 'start-server') {
     // Find out if the server is running, and if not, start it
     const isRunning = await serverIsRunning();
     if (!isRunning) {
@@ -74,7 +74,7 @@ const runAlfred = (action: z.infer<typeof cliActionSchema>, argument?: string): 
   }
 
   // ------------------------------------------------------
-  // Action: terminalCommand
+  // Action: terminal-command
   else if (cliParams.action === 'terminal-command') {
     runAlfred('terminal-command');
   }
