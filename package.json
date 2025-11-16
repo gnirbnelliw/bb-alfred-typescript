@@ -10,7 +10,7 @@
     "test:coverage": "vitest run --coverage",
     "test:alfred-icons": "vitest src/schemas/alfred-icon.test.ts",
     "test:alfred-menu-items": "vitest src/schemas/alfred-menu-item.test.ts",
-    "lint": "biome lint ./src",
+    "lint": "biome lint --log-level=error ./src",
     "format": "biome format --write ./src",
     "check": "biome check --write ./src",
     "build_server": "npx esbuild src/server.ts --platform=node --format=esm --packages=external --outfile=dist/server.js",
