@@ -57,7 +57,7 @@ export const getVariable = (name: string): string | undefined => {
   return variable ? variable : '';
 };
 
-const rawVariablesSchema = z.object({
+export const rawVariablesSchema = z.object({
   variables: z.object({
     GITHUB_TOKEN: z.string().default(''),
     LINEAR_API_KEY: z.string().default(''),
