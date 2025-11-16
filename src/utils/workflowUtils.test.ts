@@ -1,5 +1,7 @@
 import * as fs from 'node:fs';
+import { get } from 'node:http';
 import { parse } from 'node:path';
+import { Command } from 'commander';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   config,
@@ -21,6 +23,12 @@ describe('getWorkflowDataDPath', () => {
     const path = getWorkflowDataDPath();
     expect(typeof path).toBe('string');
     expect(path.length).toBeGreaterThan(0);
+  });
+
+  it('handles errors in getWorkflowDataDPath()', () => {
+    vi.stubGlobal('process', { env: null }); // force throwing
+    const result = getWorkflowDataDPath();
+    expect(result).toBe('./');
   });
 });
 
@@ -83,11 +91,36 @@ describe('getVariable', () => {
     vi.clearAllMocks();
   });
 
+  it('returns actual stored variable', () => {
+    vi.spyOn(fs, 'existsSync').mockReturnValue(true);
+    vi.spyOn(fs, 'readFileSync').mockReturnValue(
+      JSON.stringify({ variables: { GITHUB_TOKEN: 'abc123', LINEAR_API_KEY: '' } }),
+    );
+
+    expect(getVariable('GITHUB_TOKEN')).toBe('abc123');
+  });
+
+  it('returns undefined if loadWorkflowVariables returns undefined', () => {
+    vi.spyOn(fs, 'existsSync').mockReturnValue(false);
+    //Mock an error on fs.readFileSync
+    vi.spyOn(fs, 'readFileSync').mockImplementation(() => {
+      throw new Error('bad read');
+    });
+    // vi.fn(loadWorkflowVariables).mockReturnValue(undefined);
+    expect(getVariable('GITHUB_TOKEN')).toBe(undefined);
+  });
+
+  it('returns undefined for empty string values of GITHUB_TOKEN', () => {
+    vi.spyOn(fs, 'existsSync').mockReturnValue(true);
+    vi.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify({ variables: {} }));
+    expect(getVariable('GITHUB_TOKEN')).toBe(undefined);
+  });
+
   it('should not throw and return undefined for non-existent variable', () => {
     // Mock the return value of loadWorkflowVariables
     vi.fn(loadWorkflowVariables).mockReturnValue({
       variables: {
-        GITHUB_TOKEN: 'ghp_some_value_token',
+        GITHUB_TOKEN: 'ghp_some_value_tokenlllllsadldlksdl;akjdfalksdf',
         NOTION_API_KEY: '',
         LINEAR_API_KEY: '',
         OPENAI_KEY: '',
@@ -102,6 +135,15 @@ describe('getVariable', () => {
 });
 
 describe('loadWorkflowVariables', () => {
+  it('returns undefined if parsing throws', () => {
+    vi.spyOn(fs, 'existsSync').mockReturnValue(true);
+    vi.spyOn(fs, 'readFileSync').mockImplementation(() => {
+      throw new Error('bad read');
+    });
+
+    expect(loadWorkflowVariables()).toBeUndefined();
+  });
+
   it('should load and parse workflow variables from config file', () => {
     vi.fn(fs.existsSync).mockReturnValue(true);
     vi.fn(fs.readFileSync).mockReturnValue(

@@ -54,7 +54,7 @@ export const getVariable = (name: string): string | undefined => {
 
   // Find variable by name
   const variable = rawSchema.variables[name as keyof typeof rawSchema.variables];
-  return variable ? variable : '';
+  return variable ? variable : undefined;
 };
 
 export const rawVariablesSchema = z.object({
@@ -122,12 +122,9 @@ export const getCLIParams = (): z.infer<typeof cliSchema> => {
   // Allow for help text
   const sep = '-'.repeat(50);
   const codeSamples = [
-    'yarn tsx src/cli.ts --action navigate --argument "home"',
+    'yarn tsx src/cli.ts --action home --argument "home"',
     'yarn tsx src/cli.ts --action notify --argument "Hey there"',
-    'yarn tsx src/cli.ts --action terminalCommand --argument "ls -la"',
-    'yarn tsx src/cli.ts --action serverStatus',
-    'yarn tsx src/cli.ts --action getConfig',
-    'yarn tsx src/cli.ts --action nodeJSCode --nodeJSCode "console.log(\'Hello from CLI\')"',
+    'yarn tsx src/cli.ts --action terminal-command --argument "ls -la"',
   ];
   program.on('--help', () => {
     console.log('');
