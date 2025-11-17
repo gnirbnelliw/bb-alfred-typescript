@@ -33,6 +33,7 @@ function renderPage(name: string, data: Record<string, unknown> = {}) {
     header: eta.render('partials/header', {}),
     footer: eta.render('partials/footer', {}),
     body: eta.render(`pages/${name}`, data),
+    leftCol: eta.render('partials/leftCol', {}),
   };
 
   return eta.render('layouts/base', ctx) || '';
@@ -48,10 +49,14 @@ const vars = loadWorkflowVariables()?.variables || {};
 
 // Dynamic pages
 app.get('/', (c) => c.html(renderPage('home', { name: 'Workflow Configuration' })));
-app.get('/home', (c) => c.html(renderPage('home', { ...vars, name: 'Workflow Configuration' })));
-app.get('/about', (c) => c.html(renderPage('about', { name: 'About' })));
-// app.get('/today', (c) => c.html(renderPage('today', { name: 'Today' })));
-app.get('/help', (c) => c.html(renderPage('help', { name: 'Today' })));
+app.get('/home', (c) => c.html(renderPage('home', { ...vars, name: '🏠 Home' })));
+app.get('/about', (c) => c.html(renderPage('about', { name: '🗃️ About' })));
+app.get('/custom', (c) => c.html(renderPage('custom', { name: '🔥 Custom' })));
+app.get('/help', (c) => c.html(renderPage('help', { name: '❤️	Help' })));
+
+app.get('/xhr', (c) => {
+  return c.json({ status: 'ok', message: 'This is a response from the /xhr endpoint.' });
+});
 
 // ----------------------------------------------------------------------------
 // Static assets

@@ -1,8 +1,8 @@
 <div class="container">
-  <h1>Hello <%= it.name %>!</h1>
 
   <!-- About -->
-  <dov class="container">
+  <div class="container">
+    <div class="h3"><%= it.name %></div>
     <h2>CLI</h2>
     <ul>
       <li>Risk Analysis</li>
@@ -36,5 +36,5 @@
     <ul>
       <li>Notion...</li>
     </ul>
-  </dov>
+  </div>
 </div>

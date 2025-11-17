@@ -1,3 +1,8 @@
+/* body */
+body {
+  background-color: #e4e4e4;
+}
+
 /* Fonts */
 @font-face {
   font-family: "Space Grotesk";
@@ -82,7 +87,25 @@ h6,
 }
 
 .topNav {
-  border: 1px solid pink;
+  border: 0px solid #999999;
+  position:relative;
+  display:inline;
+  /* TODO: Don't do hacky things like this */
+  /* left:-35px; */
+}
+.topNav .nav-item {
+  padding-left:1em;
+  padding-right:1em;
+}
+
+.nav-item a {
+  color: #019EFF;
+}
+
+#leftCol {
+  width: 275px; 
+  height: 100vh; 
+  background-color: #e4e4e4;
 }
 
 /*  

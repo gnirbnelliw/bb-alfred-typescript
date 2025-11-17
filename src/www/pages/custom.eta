@@ -1,5 +1,5 @@
 <div class="container">
-  <!-- Help -->
+  <!-- Custom -->
   <div class="container">
     <div class="h3"><%= it.name %></div>
   </div>
