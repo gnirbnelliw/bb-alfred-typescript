@@ -7,57 +7,57 @@ export const bashCommands = customFuncInputsSchema.parse([
   {
     title: 'gh auth token',
     subtitle: 'Prints the GitHub CLI authentication token',
-    arg: 'gh auth token',
+    arg: 'eval:gh auth token',
   },
   {
     title: 'gh auth status',
     subtitle: 'Prints the GitHub CLI authentication status',
-    arg: 'gh auth status',
+    arg: 'eval:gh auth status',
   },
   {
     title: 'Get Date',
     subtitle: 'Returns the current date',
-    arg: 'date',
+    arg: 'eval:date',
   },
   {
     title: 'List Files',
     subtitle: 'Lists files in the current directory',
-    arg: 'ls -la',
+    arg: 'eval:ls -la',
   },
   {
     title: 'Calculate size of Workflow',
     subtitle: 'Calculates the total size of the Alfred workflow directory',
-    arg: 'size=$(du -sh) && echo "Workflow size: $size"',
+    arg: 'eval:size=$(du -sh) && echo "Workflow size: $size"',
   },
   {
     title: 'Calculate size of Desktop files',
     subtitle: 'Calculates the total size of files on the Desktop',
-    arg: `echo -n "Total size of Desktop: $(du -sh ~/Desktop | awk '{print $1}')"`,
+    arg: `eval:echo -n "Total size of Desktop: $(du -sh ~/Desktop | awk '{print $1}')"`,
   },
   {
     title: 'Prints node version',
     subtitle: 'Prints the current Node.js version',
-    arg: 'node -v',
+    arg: 'eval:node -v',
   },
   {
     title: 'Prints node version and path and other stuff',
     subtitle: 'Troubleshooting command to print node version, path, and nvm versions',
-    arg: 'which node && echo $PATH && ls -l ~/.nvm/versions/node',
+    arg: 'eval:which node && echo $PATH && ls -l ~/.nvm/versions/node',
   },
   {
     title: 'Prints yarn version',
     subtitle: 'Prints the current Yarn version',
-    arg: 'yarn -v',
+    arg: 'terminal: yarn -v',
   },
   {
     title: 'Says Hello',
     subtitle: 'Prints Hello to the console',
-    arg: 'say hello',
+    arg: 'eval:say hello',
   },
   {
     title: 'printenv',
     subtitle: 'Prints all environment variables',
-    arg: 'printenv',
+    arg: 'eval:printenv',
   },
   {
     title: 'Rebuild and resync Alfred with yarn: sync:alfred',
