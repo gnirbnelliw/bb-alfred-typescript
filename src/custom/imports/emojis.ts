@@ -73,6 +73,11 @@ const emojis = customFuncInputsSchema.parse([
     subtitle: 'Dog emoji',
     arg: '🐶',
   },
+  {
+    title: 'Emoji: object:gear ⚙️',
+    subtitle: 'Gear emoji',
+    arg: '⚙️',
+  },
 ]);
 
 // Define function that provides Alfred its {query} arg
