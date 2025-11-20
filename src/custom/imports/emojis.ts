@@ -2,7 +2,15 @@ import type { z } from 'zod';
 import { CustomFunction } from '..';
 import { type customFuncInputItemSchema, customFuncInputsSchema } from '../';
 
+// Trap the user's typed input into Alfred
+const query = process.argv[2] || '';
+
 const emojis = customFuncInputsSchema.parse([
+  {
+    title: `Emoji: zz ${query}`,
+    subtitle: 'Returns the process.argv0 value',
+    arg: `zz + ${query}`,
+  },
   {
     title: 'Emoji: smiling face 😊',
     subtitle: 'Smiling face emoji',
@@ -87,7 +95,15 @@ const fn = (arg: z.infer<typeof customFuncInputItemSchema>) => {
 };
 
 const emojiMenus = new CustomFunction<string>({
-  inputs: emojis,
+  inputs: emojis.filter((item) => {
+    // Only include items that match query
+    const title = typeof item === 'string' ? item : item.title;
+    const arg = typeof item === 'string' ? '' : (item.arg ?? '');
+    const subtitle = typeof item === 'string' ? '' : (item.subtitle ?? '');
+    return [title, subtitle, arg].some((field) =>
+      field.toLowerCase().includes(query.toLowerCase()),
+    );
+  }),
   iconPath: 'dist/img/icons/emoji.png',
 }).menus(fn);
 

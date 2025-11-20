@@ -20,7 +20,7 @@ const fn = (arg: z.infer<typeof customFuncInputItemSchema>) => {
 
 const mermaidMenus = new CustomFunction<string>({
   inputs: mermaidItems,
-  iconPath: 'dist/img/icons/unicode.png',
+  iconPath: 'dist/img/icons/mermaid.png',
 }).menus(fn);
 
 export { mermaidMenus };
