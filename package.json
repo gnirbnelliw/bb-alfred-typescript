@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon --watch src --ext ts,eta,css,js,json --exec tsx src/server.ts",
+    "dev": "nodemon --watch src --ext ts,eta,css,js,json --exec tsx src/cli.ts --action start-server",
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:alfred-icons": "vitest src/schemas/alfred-icon.test.ts",
@@ -46,7 +46,7 @@
     "vitest": "^4.0.8"
   },
   "engines": {
-    "node": "22.14.0",
+    "node": ">=22.14.0",
     "yarn": ">=1.22"
   }
 }
