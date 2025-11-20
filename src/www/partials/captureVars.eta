@@ -84,6 +84,8 @@
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 
+<div id="output" class="small"></div>
+
 <!-- Handle Form Submission -->
 <script>
   function validateForm(data) {
@@ -149,7 +151,11 @@
       // IMPORTANT. IGNORE FUCKING CHATGPT. MOTHERFUCKER.
       const url = `alfred://runtrigger/com.ben-willenbring.ts/save-vars/?argument=${encoded}`;
 
-      alert(JSON.stringify(data));
+      console.log(JSON.stringify(data, undefined, 2))
+
+      document.getElementById("output").textContent = JSON.stringify(data, undefined, 2);
+
+      // alert(JSON.stringify(data));
 
       // window.location.href = url;
     });

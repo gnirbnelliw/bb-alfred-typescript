@@ -29,8 +29,27 @@
 
   <body>
     <div id="body" class="row m-1">
-      <%~ it.header %> <%~ it.body %> <%~ it.footer %>
+      <!-- Header -->
+      <%~ it.header %> 
+
+      <div class="row">
+         
+        <!-- 2-col layout -->
+        <div
+          id="leftCol"
+          class="col-auto p-3"
+        >
+          <%~ it.leftCol %> 
+        </div>
+        <div id="contentCol" class="col p-3" style="height: 100vh;">
+          <%~ it.body %>
+        </div>
+      </div>
+
     </div>
+
+    <!-- Footer -->
+    <%~ it.footer %>
 
     <!-- Bootstrap JS (correct location) -->
     <script src="assets/js/bootstrap.bundle.min.js"></script>
