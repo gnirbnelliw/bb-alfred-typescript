@@ -1,8 +1,33 @@
-<div class="container">
-  <!-- Home -->
-  <div class="container">
-    <div class="h3"><%~ it.name %></div>
-    <%~ include("../partials/captureVars.eta", { GITHUB_TOKEN: it.GITHUB_TOKEN
-    }) %>
-  </div>
-</div>
+// Main Function named "run"
+function run(argv) {
+  // 🔥 This MUST be inside here...
+  query = argv[0];
+  ObjC.import('Foundation');
+
+  var path = "./bb-alfred-workflow/.env.example";
+  var fm = $.NSFileManager.defaultManager;
+
+  const possibleCommands = [
+  'gh auth token',
+  'gh auth status',
+  'date',
+  'ls -la',
+  'du -sh',
+  'setup',
+  'reset',
+  'help'
+  ]
+  
+
+  return `Command=${query}`;
+}
+
+function doShellCommand(cmd) {
+  var app = Application.currentApplication();
+  app.includeStandardAdditions = true;
+
+  // Run shell command
+  var output = app.doShellScript("ls -1");
+
+  return output;  // becomes {query}
+}
