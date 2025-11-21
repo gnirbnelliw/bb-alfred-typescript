@@ -36,7 +36,7 @@ export const normalizedIconPath = (iconPath: string): string => {
 export const alfredIconSchema = z.object({
   path: z.string().transform((val) => {
     // if the icon exists, use it. Otherwise, use default app icon.
-    return iconFileExists(val) ? normalizedIconPath(val) : defaultAppIconPath();
+    return iconFileExists(val) ? val : defaultAppIconPath();
   }),
 });
 
@@ -49,7 +49,7 @@ const iconPath = normalizedIconPath('emoji.png');
  * @returns { string }
  */
 export const defaultAppIconPath = (): string => {
-  return normalizedIconPath('alfred.png');
+  return `${iconFolderPath}/alfred.png`;
 };
 
 export const defaultAppIcon = (): AlfredIcon => {
