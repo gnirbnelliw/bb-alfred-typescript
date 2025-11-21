@@ -7,11 +7,6 @@ const query = process.argv[2] || '';
 
 const emojis = customFuncInputsSchema.parse([
   {
-    title: `Emoji: zz ${query}`,
-    subtitle: 'Returns the process.argv0 value',
-    arg: `zz + ${query}`,
-  },
-  {
     title: 'Emoji: smiling face 😊',
     subtitle: 'Smiling face emoji',
     arg: '😊',
