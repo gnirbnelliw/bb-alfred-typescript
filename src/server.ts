@@ -147,4 +147,3 @@ export const killServer = async (port: number = PORT, host: string = HOST): Prom
     console.log(`✅ Killed server running at http://${host}:${port}`);
   });
 };
-

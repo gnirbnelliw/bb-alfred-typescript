@@ -2,7 +2,6 @@ import { z } from 'zod';
 import { type AlfredMenuItem, alfredMenuItemSchema } from '../schemas/alfred-menu-item.js';
 import { urlSchema } from '../schemas/url';
 
-
 export const alfredLinkPropsSchema = z.object({
   link: z.url().refine((url) => urlSchema.parse(url)),
   text: z.string().min(5).optional(),
@@ -11,7 +10,6 @@ export const alfredLinkPropsSchema = z.object({
     .optional()
     .refine((p) => p?.startsWith('dist/img/icons/')),
 });
-
 
 // Create a generic alfredMenuItem function that takes a params object and returns an AlfredMenuItem
 export const alfredMenuItemFromParams = (
@@ -27,7 +25,6 @@ export const alfredMenuItemFromParams = (
     icon: icon ?? { path: 'dist/img/icons/alfred.png' },
   });
 };
-
 
 /**
  * Generates an Alfred Menu Item from a given link.
@@ -50,7 +47,6 @@ export const alfredMenuItemFromLink = (
     },
   });
 };
-
 
 export const alfredCommandPropsSchema = z.object({
   cmd: z.string().min(2),

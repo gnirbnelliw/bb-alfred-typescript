@@ -101,4 +101,3 @@ const getVariables = () => {
     process.exit(1);
   }
 })();
-
