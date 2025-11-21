@@ -2,12 +2,23 @@ import type { z } from 'zod';
 import { CustomFunction } from '..';
 import { type customFuncInputItemSchema, customFuncInputsSchema } from '../';
 import { getLastNPRs } from '../functions/git';
+import { iconFolderPath, normalizedIconPath } from '../../schemas/alfred-icon';
 
 export const bashCommands = customFuncInputsSchema.parse([
   {
     title: 'gh auth token',
     subtitle: 'Prints the GitHub CLI authentication token',
     arg: 'eval:gh auth token',
+  },
+  {
+    title: 'Troubleshooting: iconFolderPath',
+    subtitle: 'Prints the icon folder path',
+    arg: iconFolderPath,
+  },
+  {
+    title: 'Troubleshooting: normalizedIconPath emoji.png',
+    subtitle: 'Prints the normalized icon path for emoji.png',
+    arg: normalizedIconPath('emoji.png'),
   },
   {
     title: 'gh auth status',
@@ -68,6 +79,11 @@ export const bashCommands = customFuncInputsSchema.parse([
     title: 'pwd',
     subtitle: 'Opens the current working directory',
     arg: 'terminal:dir=$(pwd) && open "$dir" && echo $dir',
+  },
+  {
+    title: 'Alfred Build',
+    subtitle: 'cds into the workflow directory and runs yarn build',
+    arg: 'eval:cd ./bb-alfred-typescript && yarn build',
   },
 ]);
 
