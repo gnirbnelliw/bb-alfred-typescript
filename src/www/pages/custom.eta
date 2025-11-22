@@ -1,6 +1,8 @@
 <div class="container">
   <!-- Custom -->
   <div class="container">
-    <div class="h3"><%= it.name %></div>
+    <h1 class="text-primary"><%= it.name %></h1>
+
+    <p>There are currently no custom automations.</p>
   </div>
 </div>

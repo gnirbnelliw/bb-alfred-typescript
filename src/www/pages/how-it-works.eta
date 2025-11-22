@@ -1,0 +1,57 @@
+<div class="container">
+  <!-- Help -->
+  <div class="container">
+    <h1 class="text-primary"><%= it.name %></h1>
+
+    <p class="lead"><b>Combines <a href="https://www.alfredapp.com/about/" target="_blank">Alfred</a></b> with <code>TypeScript</code> to run <b><u>pre-built</u></b> & <b><u>tested automations</u></b> from your Mac.</p>
+
+   
+
+    <h2 class="text-primary">What does it automate?</h2>
+
+    <div class="row small">
+      <div class="col-4">
+
+        <p class="lead"><b>Getting answers to release-related questions like...</b></p>
+        <ul>
+          <li>Are we releasable right now?</li>
+          <li>Are there any release blockers right?</li>
+          <li>What's the current release branch?</li>
+          <li>Where's the App Deployment Hub?</li>
+          <li>... more</li>
+        </ul>
+
+      </div>
+      <div class="col-4">
+        <p class="lead"><b>Running time-saving pre-built and tested automations like...</b></p>
+
+        <ul>
+          <li>Create a new release candidate</li>
+          <li>Generate release notes for a commit range</li>  
+          <li>Run a risk analysis of a PR or a commit range</li>
+          <li>Backport a PR into a release branch</li>
+          <li>... more</li>
+        </ul>
+      </div>
+
+
+      <div class="col-4">
+        <p class="lead"><b>Clipboard / file access to assets without downloading anything...</b></p>
+        <ul>
+            <li>Images and brand assets</li>
+            <li>RGB & Hex color values for the official palette</li>
+            <li>Common code and text snippets</li>
+            <li>Military acronym definitions</li>
+            <li>... more</li>
+          </ul>
+      </div>
+
+    </div>
+
+
+
+    
+    
+    
+  </div>
+</div>

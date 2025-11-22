@@ -5,12 +5,15 @@ import * as path from 'node:path';
 import { serve } from '@hono/node-server';
 import { serveStatic } from '@hono/node-server/serve-static';
 import { Eta } from 'eta';
-import { Hono } from 'hono';
-import { config } from './utils/workflowUtils';
-import { loadWorkflowVariables } from './utils/workflowUtils';
+import { type Context, Hono } from 'hono';
+import { getEnv, getEnvironmentVariables } from './utils/environment';
 
-const PORT = config.port;
-const HOST = config.host;
+const PORT = Number(getEnv('SERVER_PORT'));
+const HOST = getEnv('HOST');
+// ----------------------------------------------------------------------------
+// Paths
+// ----------------------------------------------------------------------------
+const vars = getEnvironmentVariables();
 
 // ----------------------------------------------------------------------------
 // Paths
@@ -30,7 +33,7 @@ const eta = new Eta({ views: WWW_ROOT });
 function renderPage(name: string, data: Record<string, unknown> = {}) {
   const ctx = {
     title: data.title || 'Alfred Workflow',
-    header: eta.render('partials/header', {}),
+    header: eta.render('partials/header', { ...vars }),
     footer: eta.render('partials/footer', {}),
     body: eta.render(`pages/${name}`, data),
     leftCol: eta.render('partials/leftCol', {}),
@@ -44,18 +47,24 @@ function renderPage(name: string, data: Record<string, unknown> = {}) {
 // ----------------------------------------------------------------------------
 const app = new Hono();
 
-// Pre-populate with workflow variables where appropriate...
-const vars = loadWorkflowVariables()?.variables || {};
+const renderRoute =
+  (page: string, data: Record<string, unknown> = {}) =>
+  (c: Context) =>
+    c.html(renderPage(page, data));
 
-// Dynamic pages
-app.get('/', (c) => c.html(renderPage('home', { name: 'Workflow Configuration' })));
-app.get('/home', (c) => c.html(renderPage('home', { ...vars, name: '🏠 Home' })));
-app.get('/about', (c) => c.html(renderPage('about', { name: '🗃️ About' })));
-app.get('/custom', (c) => c.html(renderPage('custom', { name: '🔥 Custom' })));
-app.get('/help', (c) => c.html(renderPage('help', { name: '❤️	Help' })));
+app.get('/', renderRoute('home', { ...vars, name: '🏠 Quick Start' }));
+app.get('/home', renderRoute('home', { ...vars, name: '🏠 Quick Start' }));
+
+app.get('/about', renderRoute('about', { name: '🗃️ About' }));
+app.get('/custom', renderRoute('custom', { name: '🔥 Custom Automations' }));
+app.get('/how', renderRoute('how-it-works', { name: '❤️ How It Works' }));
+app.get('/standard', renderRoute('standard', { name: '📊 Standard Automations' }));
 
 app.get('/xhr', (c) => {
-  return c.json({ status: 'ok', message: 'This is a response from the /xhr endpoint.' });
+  return c.json({
+    status: 'ok',
+    message: 'This is a response from the /xhr endpoint.',
+  });
 });
 
 // ----------------------------------------------------------------------------
@@ -67,7 +76,7 @@ const STATIC_PREFIXES = ['/assets/'];
 function staticMiddleware() {
   return serveStatic({
     root: WWW_ROOT,
-    rewriteRequestPath: (p) => p, // serve exactly as requested
+    rewriteRequestPath: (p) => p, // leave lookup untouched
   });
 }
 
@@ -113,7 +122,7 @@ export function serverIsRunning(port: number = PORT, host: string = HOST): Promi
  * Starts the Hono server if not already running. @see {@link serverIsRunning}
  * @returns { Promise<void> }
  */
-export async function startServer(): Promise<void> {
+export async function startServer_old(): Promise<void> {
   const running = await serverIsRunning(PORT, HOST);
   if (running) {
     console.log(`🔥 Already running at http://${HOST}:${PORT}`);
@@ -147,3 +156,79 @@ export const killServer = async (port: number = PORT, host: string = HOST): Prom
     console.log(`✅ Killed server running at http://${host}:${port}`);
   });
 };
+
+/**
+ * Start the local server if not already running,
+ * ensure it is running, then open the browser.
+ */
+export async function startServer(route = 'home'): Promise<void> {
+  const url = `http://${HOST}:${PORT}/${route}`;
+
+  // If already running → just open browser
+  if (await serverIsRunning(PORT, HOST)) {
+    console.log(`🔥 Server already running at ${url}`);
+    openBrowser(url);
+    return;
+  }
+
+  // Not running → start server
+  console.log('🚀 Starting server...');
+  serve({ fetch: app.fetch, hostname: HOST, port: PORT }, () => {
+    console.log(`✅ Server running at ${url}`);
+
+    // Wait a moment for the port to fully bind
+    setTimeout(() => openBrowser(url), 150);
+  });
+}
+
+/** Opens a browser reliably on macOS */
+function openBrowser(url: string): void {
+  const script = `
+    set targetURL to "${url}"
+    set hostPrefix to "http://${HOST}"
+
+    -- Ensure Chrome is running
+    if application "Google Chrome" is not running then
+      tell application "Google Chrome" to activate
+      delay 0.25
+    end if
+
+    tell application "Google Chrome"
+      set foundTab to missing value
+      set foundWindow to missing value
+
+      -- Find a tab whose URL starts with hostPrefix
+      repeat with w in windows
+        repeat with t in tabs of w
+          if URL of t starts with hostPrefix then
+            set foundTab to t
+            set foundWindow to w
+            exit repeat
+          end if
+        end repeat
+        if foundTab is not missing value then exit repeat
+      end repeat
+
+      if foundTab is missing value then
+        -- No tab exists → open a new one with the target URL
+        if (count of windows) = 0 then
+          make new window
+        end if
+
+        set foundWindow to window 1
+        set foundTab to make new tab at foundWindow with properties {URL:targetURL}
+
+      else
+        -- A matching tab exists → refresh (reload) it
+        tell foundTab to reload
+      end if
+
+      -- Focus the correct tab and window
+      set active tab of foundWindow to foundTab
+      set index of foundWindow to 1
+      activate
+    end tell
+  `;
+
+  exec(`osascript -e '${script.replace(/'/g, "\\'")}'`);
+}

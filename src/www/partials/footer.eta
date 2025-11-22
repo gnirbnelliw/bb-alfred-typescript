@@ -1,3 +1,8 @@
-<div data-id="footer" class="fs-6 border border-danger">
-  <p>&copy; <%= it.year || new Date().getFullYear() %></p>
+<div data-id="footer" class="fs-6">
+  <p>Made with <code>Alfred</code> &amp;  <code>TypeScript</code>. 
+  <span class="ms-2">
+  &copy; <%= it.year || new Date().getFullYear() %> Onebrief
+  </span>
+  
+  </p>
 </div>
