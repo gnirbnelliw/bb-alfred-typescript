@@ -14,34 +14,27 @@
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         // Code here
-        const btn = document.getElementById("foo");
-        if (btn) {
-          btn.addEventListener("click", async function () {
-            // Await a fetch request to jsonFiles/sample.json
-            const resp = await fetch("assets/sample.json");
-            const data = await resp.json();
-            alert(JSON.stringify(data, undefined, 2));
-          });
-        }
+        Prism.highlightAll();
       });
     </script>
+
+    <!-- Code Syntax Hilighting -->
+    <link href="/assets/css/prism.css" rel="stylesheet" />
+    <script src="/assets/js/prism.js"></script>
+    
   </head>
 
   <body>
     <div id="body" class="row m-1">
       <!-- Header -->
+
       <%~ it.header %> 
 
-      <div class="row">
+      <div data-id="content" class="row border border-danger">
          
-        <!-- 2-col layout -->
-        <div
-          id="leftCol"
-          class="col-auto p-3"
-        >
-          <%~ it.leftCol %> 
-        </div>
-        <div id="contentCol" class="col p-3" style="height: 100vh;">
+        <!-- 1-col layout -->
+        
+        <div id="contentCol" class="col p-3">
           <%~ it.body %>
         </div>
       </div>
@@ -53,5 +46,6 @@
 
     <!-- Bootstrap JS (correct location) -->
     <script src="assets/js/bootstrap.bundle.min.js"></script>
+    
   </body>
 </html>

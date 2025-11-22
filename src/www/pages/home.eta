@@ -1,33 +1,16 @@
-// Main Function named "run"
-function run(argv) {
-  // 🔥 This MUST be inside here...
-  query = argv[0];
-  ObjC.import('Foundation');
+<div class="container">
+  <!-- Home -->
+  <div class="container">
+    <h1 class="text-primary"><%= it.name %></h1>
 
-  var path = "./bb-alfred-workflow/.env.example";
-  var fm = $.NSFileManager.defaultManager;
+    <h2 class="text-secondary"><code>[Option][Spacebar]</code> → <code><%= it.alfred_keyword %></code> →  <code>Overlord</code></h2>
+    <p class="lead">Hit [enter] to action the automation — once it's highlighted.</p>
+    <img class="img-fluid pb-4 w-50" src="/assets/img/quickstart1.png"/>
 
-  const possibleCommands = [
-  'gh auth token',
-  'gh auth status',
-  'date',
-  'ls -la',
-  'du -sh',
-  'setup',
-  'reset',
-  'help'
-  ]
-  
+    <h2 class="text-secondary">Check your clipboard</h2>
+    <p class="lead">A synopsized overview of <a href="https://en.wikipedia.org/wiki/Operation_Overlord" target="_blank">operation Overlord</a> is now on your clipboard — one of many <code>Lorem Ipsums</code>.</p>
 
-  return `Command=${query}`;
-}
+    <pre class="w-75 language-bash"><code>The Allied invasion of Normandy, codenamed Operation Overlord, marks a pivotal moment in our campaign to liberate Europe from Nazi control. This mission is to establish a strong foothold on the beaches of Normandy, with American forces taking the lead on Utah and Omaha beaches, supported by our British and Canadian allies on Gold, Juno, and Sword... (etc.)</code></pre>
 
-function doShellCommand(cmd) {
-  var app = Application.currentApplication();
-  app.includeStandardAdditions = true;
-
-  // Run shell command
-  var output = app.doShellScript("ls -1");
-
-  return output;  // becomes {query}
-}
+  </div>
+</div>

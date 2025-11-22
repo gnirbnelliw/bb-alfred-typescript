@@ -50,7 +50,11 @@ body {
 }
 
 [data-id="footer"] {
-  display: none;
+  border-top:1px solid #999999 !important;
+  background-color: #CDD2D7;
+  font-size:.9em;
+  padding:20px;
+  padding-bottom:5px;
 }
 /* Header fonts */
 h1,
@@ -68,11 +72,12 @@ h6,
   font-family: "Space Grotesk", sans-serif;
   color: #33414b;
   font-weight: 700;
+  zoom: .75;
 }
 
 [data-id="header"] {
   position: relative;
-  padding-left: 105px !important;
+  padding-left: 95px !important;
   min-height: 90px;
 }
 
@@ -87,12 +92,19 @@ h6,
 }
 
 .topNav {
-  border: 0px solid #999999;
   position:relative;
-  display:inline;
-  /* TODO: Don't do hacky things like this */
-  /* left:-35px; */
+  display: inline-block;
+  margin:0px !important;
+  padding:0px !important;
 }
+
+#navbarNav {
+  position:relative;
+  left:-35px;
+  padding:0px !important;
+  margin:0px !important;
+}
+
 .topNav .nav-item {
   padding-left:1em;
   padding-right:1em;
@@ -103,9 +115,30 @@ h6,
 }
 
 #leftCol {
+  position:relative;
   width: 275px; 
-  height: 100vh; 
+  height: calc(100vh - 170px);
   background-color: #e4e4e4;
+}
+
+#contentCol {
+  min-height:75vh;
+}
+
+img {
+  background: none !important;
+}
+
+
+
+pre code {
+  font-size:.8em !important;
+}
+
+pre, code {
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
 }
 
 /*  
