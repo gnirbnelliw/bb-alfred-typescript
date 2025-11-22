@@ -5,7 +5,7 @@ import * as path from 'node:path';
 import { serve } from '@hono/node-server';
 import { serveStatic } from '@hono/node-server/serve-static';
 import { Eta } from 'eta';
-import { Context, Hono } from 'hono';
+import { type Context, Hono } from 'hono';
 import { getEnv, getEnvironmentVariables } from './utils/environment';
 
 const PORT = Number(getEnv('SERVER_PORT'));
@@ -161,7 +161,7 @@ export const killServer = async (port: number = PORT, host: string = HOST): Prom
  * Start the local server if not already running,
  * ensure it is running, then open the browser.
  */
-export async function startServer(route: string = 'home'): Promise<void> {
+export async function startServer(route = 'home'): Promise<void> {
   const url = `http://${HOST}:${PORT}/${route}`;
 
   // If already running → just open browser

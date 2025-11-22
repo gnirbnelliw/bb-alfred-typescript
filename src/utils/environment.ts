@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import type { z } from 'zod';
 import {
   envSchema,
   customAlfredEnvSchema,
@@ -19,10 +19,7 @@ export const getEnvironmentVariables = (): z.infer<typeof customAlfredEnvSchema>
   return parsedEnv.success ? parsedEnv.data : customAlfredEnvSchema.parse({}); // Return defaults if parsing fails
 };
 
-export function getEnv<K extends keyof CustomEnvSchemaType>(
-  key: K,
-  defaultValue: string = '',
-): string {
+export function getEnv<K extends keyof CustomEnvSchemaType>(key: K, defaultValue = ''): string {
   // Parse all of process.env
   const parsedEnv = customAlfredEnvSchema.safeParse(process.env);
   if (!parsedEnv.success) {
