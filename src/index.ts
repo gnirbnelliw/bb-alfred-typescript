@@ -7,7 +7,7 @@ import { notionMenus } from './custom/imports/notionDocs';
 import { loremMenus, militaryOrderMenus, unicodeMenus } from './custom/imports/textSnippets';
 import { alfredMenuItemsSchema, type alfredVariableSchema } from './schemas/alfred-menu-item';
 import { alfredMenuItemFromParams } from './utils/menuUtils';
-import { config, getConfiguredVariables, loadWorkflowVariables } from './utils/workflowUtils';
+import { config, loadWorkflowVariables } from './utils/workflowUtils';
 
 // TODO: Is this really necessary?
 const getVariables = () => {

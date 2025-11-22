@@ -38,6 +38,8 @@ export const customAlfredEnvSchema = envSchema.extend({
     .string()
     .min(40)
     .default(process.env.GITHUB_TOKEN || ''),
+  SYNC_FROM: z.string().default(process.env.SYNC_FROM || ''),
+  SYNC_TO: z.string().default(process.env.SYNC_TO || ''),
 });
 
 export type CustomEnvSchemaType = z.infer<typeof customAlfredEnvSchema>;
