@@ -1,3 +1,59 @@
+describe('CustomFunction edge cases', () => {
+  it('getMatchingWords: input is string, arg is undefined', () => {
+    const custom = new CustomFunction({ inputs: ['hello'] });
+    expect(custom.getMatchingWords('hello')).toBe('hello');
+  });
+
+  it('getMatchingWords: input is string, arg is provided', () => {
+    const custom = new CustomFunction({ inputs: ['hello'] });
+    expect(custom.getMatchingWords('hello', 'world')).toBe('hello world');
+  });
+
+  it('getMatchingWords: input is object, subtitle and arg missing', () => {
+    const obj = { title: 'foo' };
+    const custom = new CustomFunction({ inputs: [obj] });
+    expect(custom.getMatchingWords(obj)).toBe('foo');
+  });
+
+  it('getMatchingWords: input is object, subtitle present, arg missing', () => {
+    const obj = { title: 'foo', subtitle: 'bar' };
+    const custom = new CustomFunction({ inputs: [obj] });
+    expect(custom.getMatchingWords(obj)).toBe('foo bar');
+  });
+
+  it('getMatchingWords: input is object, arg present', () => {
+    const obj = { title: 'foo', subtitle: 'bar', arg: 'baz' };
+    const custom = new CustomFunction({ inputs: [obj] });
+    expect(custom.getMatchingWords(obj)).toBe('foo bar baz');
+  });
+
+  it('menus: input is string', () => {
+    const custom = new CustomFunction({ inputs: ['hello'] });
+    const menus = custom.menus((input) => (typeof input === 'string' ? input : input.title));
+    expect(menus[0].title).toBe('hello');
+    expect(menus[0].autocomplete).toBe('hello');
+  });
+
+  it('menus: input is object, missing subtitle/arg', () => {
+    const obj = { title: 'foo' };
+    const custom = new CustomFunction({ inputs: [obj] });
+    const menus = custom.menus(() => 'bar');
+    expect(menus[0].title).toEqual('foo');
+    for (const word of ['foo', 'bar']) {
+      expect(menus[0].autocomplete).toContain(word);
+    }
+  });
+
+  it('menus: input is object, subtitle and arg present', () => {
+    const obj = { title: 'foo', subtitle: 'bar', arg: 'baz' };
+    const custom = new CustomFunction({ inputs: [obj] });
+    const menus = custom.menus(() => 'baz');
+    expect(menus[0].title).toBe('foo');
+    for (const word of ['foo', 'bar', 'baz']) {
+      expect(menus[0].autocomplete).toContain(word);
+    }
+  });
+});
 // Create a vitest test file for the CustomFunction class in src/custom/index.ts
 import { describe, expect, it } from 'vitest';
 import type { z } from 'zod';
