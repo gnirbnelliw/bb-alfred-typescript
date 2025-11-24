@@ -1,13 +1,107 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import fs from 'fs';
+import { isValidGithubToken, isValidOpenAIKey, isValidAPIKey } from './workflowUtils';
 
-import { getConfig, isValidAPIKey, isValidGithubToken, isValidOpenAIKey } from './workflowUtils';
+vi.mock('fs', async (importOriginal) => {
+  const actual = (await importOriginal()) as any;
+  return {
+    ...actual,
+    default: { ...actual, readFileSync: vi.fn() },
+    readFileSync: vi.fn(),
+  };
+});
 
+describe('getConfig', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should parse valid config JSON', async () => {
+    const validConfig = JSON.stringify({
+      ALFRED_WORKFLOW_BUNDLEID: 'bundleid',
+      ALFRED_WORKFLOW_NAME: 'name',
+      ALFRED_WORKFLOW_DESCRIPTION: 'desc',
+      ALFRED_WORKFLOW_UID: 'uid01',
+      ALFRED_WORKFLOW_DATA: 'data',
+      ALFRED_KEY_SEQUENCE: 'seq',
+      SERVER_PORT: 1234,
+      HOST: 'localhost',
+      REPO_NAME: 'repo',
+      REPO_OWNER: 'owner',
+      WORKFLOW_PATH: 'path',
+    });
+    vi.mocked(fs.readFileSync).mockReturnValue(validConfig);
+    const { getConfig } = await import('./workflowUtils');
+    expect(getConfig()).toHaveProperty('REPO_NAME', 'repo');
+  });
+
+  it('should throw if file not found', async () => {
+    vi.mocked(fs.readFileSync).mockImplementation(() => {
+      throw new Error('ENOENT');
+    });
+    const { getConfig } = await import('./workflowUtils');
+    expect(() => getConfig()).toThrow('Failed to load configuration.');
+  });
+
+  it('should throw if invalid JSON', async () => {
+    vi.mocked(fs.readFileSync).mockReturnValue('not-json');
+    const { getConfig } = await import('./workflowUtils');
+    expect(() => getConfig()).toThrow('Failed to load configuration.');
+  });
+
+  it('should throw if missing required fields', async () => {
+    const invalidConfig = JSON.stringify({ REPO_NAME: 'repo' });
+    vi.mocked(fs.readFileSync).mockReturnValue(invalidConfig);
+    const { getConfig } = await import('./workflowUtils');
+    expect(() => getConfig()).toThrow();
+  });
+});
+
+describe('getConfigPath', () => {
+  it('should return the correct config path', async () => {
+    const { getConfigPath } = await import('./workflowUtils');
+    expect(getConfigPath()).toContain('config.json');
+  });
+});
+
+describe('getCLIParams', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should parse CLI arguments', async () => {
+    const argv = ['node', 'cli.js', '--action', 'home', '--argument', 'foo'];
+    const originalArgv = process.argv;
+    process.argv = argv;
+    const { getCLIParams } = await import('./workflowUtils');
+    const params = getCLIParams();
+    expect(params.action).toBe('home');
+    expect(params.argument).toBe('foo');
+    process.argv = originalArgv;
+  });
+});
 describe('config', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it('should have default configuration values', async () => {
+    vi.mocked(fs.readFileSync).mockReturnValue(
+      JSON.stringify({
+        ALFRED_WORKFLOW_BUNDLEID: 'bundleid',
+        ALFRED_WORKFLOW_NAME: 'name',
+        ALFRED_WORKFLOW_DESCRIPTION: 'desc',
+        ALFRED_WORKFLOW_UID: 'uid01',
+        ALFRED_WORKFLOW_DATA: 'data',
+        ALFRED_KEY_SEQUENCE: 'seq',
+        SERVER_PORT: 1234,
+        HOST: 'localhost',
+        REPO_NAME: 'repo',
+        REPO_OWNER: 'owner',
+        WORKFLOW_PATH: 'path',
+      }),
+    );
+    const { getConfig } = await import('./workflowUtils');
     const config = getConfig();
     expect(config).toBeDefined();
     expect(config).toHaveProperty('ALFRED_WORKFLOW_BUNDLEID');
