@@ -84,15 +84,16 @@ setup:
 	# -----------------------------------------------
 	# Conditional Git Sync
 	# -----------------------------------------------
-ifneq ($(shell echo "$(ACTION)" | tr '[:upper:]' '[:lower:]'),rebuild)
+ifeq ($(shell echo "$(ACTION)" | tr '[:upper:]' '[:lower:]'),reset)
 	@echo "🔥 Sync repo with latest main..."
 	@cd $(REPO) && \
 		$(GIT) fetch --all --prune && \
 		$(GIT) reset --hard HEAD && \
 		$(GIT) switch main && \
+		$(GIT) pull && \
 		$(GIT) log -5 --oneline
 else
-	@echo "🔧 Rebuild mode: skipping git sync and using existing changes..."
+	@echo "🔧 Skipping git sync: using local changes..."
 endif
 
 	# -----------------------------------------------
