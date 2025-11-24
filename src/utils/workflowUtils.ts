@@ -1,5 +1,4 @@
 import fs from 'fs';
-import { exec } from 'node:child_process';
 import type { z } from 'zod';
 import { alfredConfigSchema } from '../schemas/workflow-config';
 
@@ -29,11 +28,6 @@ export const getConfig = (): z.infer<typeof alfredConfigSchema> => {
     throw new Error('Failed to load configuration.');
   }
 };
-
-/**
- * Configuration object loaded from config.json. This contains the most important Alfred workflow settings and API keys.
- */
-export const config = getConfig();
 
 /**
  *
