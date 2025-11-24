@@ -1,160 +1,119 @@
-import * as fs from 'node:fs';
-import { get } from 'node:http';
-import { parse } from 'node:path';
-import { Command } from 'commander';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import {
-  config,
-  getConfiguredVariables,
-  getDefaultWorkflowConfig,
-  getVariable,
-  getWorkflowDataDPath,
-  isValidAPIKey,
-  isValidGithubToken,
-  isValidOpenAIKey,
-  loadWorkflowVariables,
-  rawVariablesSchema,
-} from './workflowUtils';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import fs from 'fs';
+import { isValidGithubToken, isValidOpenAIKey, isValidAPIKey } from './workflowUtils';
 
-vi.mock('fs');
-
-describe('getWorkflowDataDPath', () => {
-  it('should return a string path', () => {
-    const path = getWorkflowDataDPath();
-    expect(typeof path).toBe('string');
-    expect(path.length).toBeGreaterThan(0);
-  });
-
-  it('handles errors in getWorkflowDataDPath()', () => {
-    vi.stubGlobal('process', { env: null }); // force throwing
-    const result = getWorkflowDataDPath();
-    expect(result).toBe('./');
-  });
+vi.mock('fs', async (importOriginal) => {
+  const actual = (await importOriginal()) as any;
+  return {
+    ...actual,
+    default: { ...actual, readFileSync: vi.fn() },
+    readFileSync: vi.fn(),
+  };
 });
 
-describe('getConfiguredVariables', () => {
-  it('should return an array of configured variables', () => {
-    const vars = getConfiguredVariables();
-    expect(Array.isArray(vars)).toBe(true);
-  });
-});
-
-describe('getDefaultWorkflowConfig', () => {
-  it('should return the default workflow configuration', () => {
-    const defaultConfig = getDefaultWorkflowConfig();
-    expect(defaultConfig).toHaveProperty('persistentDataPath');
-    expect(defaultConfig).toHaveProperty('variables');
-  });
-});
-
-describe('config', () => {
-  it('should have default configuration values', () => {
-    expect(config).toHaveProperty('persistentDataPath');
-    expect(config).toHaveProperty('variables');
-  });
-});
-
-describe('rawVariablesSchema', () => {
-  it('should fail on an empty object', () => {
-    const parsed = rawVariablesSchema.safeParse({});
-    expect(parsed.success).toBe(false);
-  });
-
-  it('should succesfully parse an object with an empty variabes key', () => {
-    const obj: object = {
-      variables: {
-        GITHUB_TOKEN: '',
-      },
-    };
-
-    const parsed = rawVariablesSchema.safeParse(obj);
-    console.log(parsed);
-    expect(parsed.success).toBe(true);
-    // Despite being empty, it will have all of these properties set to ''
-    const defaultProps = [
-      'GITHUB_TOKEN',
-      'NOTION_API_KEY',
-      'LINEAR_API_KEY',
-      'OPENAI_KEY',
-      'TESTMO_API_KEY',
-    ];
-    for (const prop of defaultProps) {
-      expect(parsed.data?.variables).toHaveProperty(prop);
-      expect(parsed.data?.variables[prop as keyof typeof parsed.data.variables]).toBe('');
-    }
-  });
-});
-
-describe('getVariable', () => {
+describe('getConfig', () => {
   beforeEach(() => {
-    // Clear mocks
     vi.clearAllMocks();
   });
 
-  it('returns actual stored variable', () => {
-    vi.spyOn(fs, 'existsSync').mockReturnValue(true);
-    vi.spyOn(fs, 'readFileSync').mockReturnValue(
-      JSON.stringify({ variables: { GITHUB_TOKEN: 'abc123', LINEAR_API_KEY: '' } }),
-    );
-
-    expect(getVariable('GITHUB_TOKEN')).toBe('abc123');
-  });
-
-  it('returns undefined if loadWorkflowVariables returns undefined', () => {
-    vi.spyOn(fs, 'existsSync').mockReturnValue(false);
-    //Mock an error on fs.readFileSync
-    vi.spyOn(fs, 'readFileSync').mockImplementation(() => {
-      throw new Error('bad read');
+  it('should parse valid config JSON', async () => {
+    const validConfig = JSON.stringify({
+      ALFRED_WORKFLOW_BUNDLEID: 'bundleid',
+      ALFRED_WORKFLOW_NAME: 'name',
+      ALFRED_WORKFLOW_DESCRIPTION: 'desc',
+      ALFRED_WORKFLOW_UID: 'uid01',
+      ALFRED_WORKFLOW_DATA: 'data',
+      ALFRED_KEY_SEQUENCE: 'seq',
+      SERVER_PORT: 1234,
+      HOST: 'localhost',
+      REPO_NAME: 'repo',
+      REPO_OWNER: 'owner',
+      WORKFLOW_PATH: 'path',
     });
-    // vi.fn(loadWorkflowVariables).mockReturnValue(undefined);
-    expect(getVariable('GITHUB_TOKEN')).toBe(undefined);
+    vi.mocked(fs.readFileSync).mockReturnValue(validConfig);
+    const { getConfig } = await import('./workflowUtils');
+    expect(getConfig()).toHaveProperty('REPO_NAME', 'repo');
   });
 
-  it('returns undefined for empty string values of GITHUB_TOKEN', () => {
-    vi.spyOn(fs, 'existsSync').mockReturnValue(true);
-    vi.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify({ variables: {} }));
-    expect(getVariable('GITHUB_TOKEN')).toBe(undefined);
-  });
-
-  it('should not throw and return undefined for non-existent variable', () => {
-    // Mock the return value of loadWorkflowVariables
-    vi.fn(loadWorkflowVariables).mockReturnValue({
-      variables: {
-        GITHUB_TOKEN: 'ghp_some_value_tokenlllllsadldlksdl;akjdfalksdf',
-        NOTION_API_KEY: '',
-        LINEAR_API_KEY: '',
-        OPENAI_KEY: '',
-        TESTMO_API_KEY: '',
-      },
+  it('should throw if file not found', async () => {
+    vi.mocked(fs.readFileSync).mockImplementation(() => {
+      throw new Error('ENOENT');
     });
+    const { getConfig } = await import('./workflowUtils');
+    expect(() => getConfig()).toThrow('Failed to load configuration.');
+  });
 
-    // Expect that retrieving a non-existent variable DOES NOT throw
-    expect(() => getVariable('NON_EXISTENT_VAR')).not.toThrow();
-    expect(getVariable('NON_EXISTENT_VAR')).toBeUndefined();
+  it('should throw if invalid JSON', async () => {
+    vi.mocked(fs.readFileSync).mockReturnValue('not-json');
+    const { getConfig } = await import('./workflowUtils');
+    expect(() => getConfig()).toThrow('Failed to load configuration.');
+  });
+
+  it('should throw if missing required fields', async () => {
+    const invalidConfig = JSON.stringify({ REPO_NAME: 'repo' });
+    vi.mocked(fs.readFileSync).mockReturnValue(invalidConfig);
+    const { getConfig } = await import('./workflowUtils');
+    expect(() => getConfig()).toThrow();
   });
 });
 
-describe('loadWorkflowVariables', () => {
-  it('returns undefined if parsing throws', () => {
-    vi.spyOn(fs, 'existsSync').mockReturnValue(true);
-    vi.spyOn(fs, 'readFileSync').mockImplementation(() => {
-      throw new Error('bad read');
-    });
+describe('getConfigPath', () => {
+  it('should return the correct config path', async () => {
+    const { getConfigPath } = await import('./workflowUtils');
+    expect(getConfigPath()).toContain('config.json');
+  });
+});
 
-    expect(loadWorkflowVariables()).toBeUndefined();
+describe('getCLIParams', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
-  it('should load and parse workflow variables from config file', () => {
-    vi.fn(fs.existsSync).mockReturnValue(true);
-    vi.fn(fs.readFileSync).mockReturnValue(
+  it('should parse CLI arguments', async () => {
+    const argv = ['node', 'cli.js', '--action', 'home', '--argument', 'foo'];
+    const originalArgv = process.argv;
+    process.argv = argv;
+    const { getCLIParams } = await import('./workflowUtils');
+    const params = getCLIParams();
+    expect(params.action).toBe('home');
+    expect(params.argument).toBe('foo');
+    process.argv = originalArgv;
+  });
+});
+describe('config', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should have default configuration values', async () => {
+    vi.mocked(fs.readFileSync).mockReturnValue(
       JSON.stringify({
-        variables: {
-          GITHUB_TOKEN: 'foo',
-          LINEAR_API_KEY: 'bar',
-        },
+        ALFRED_WORKFLOW_BUNDLEID: 'bundleid',
+        ALFRED_WORKFLOW_NAME: 'name',
+        ALFRED_WORKFLOW_DESCRIPTION: 'desc',
+        ALFRED_WORKFLOW_UID: 'uid01',
+        ALFRED_WORKFLOW_DATA: 'data',
+        ALFRED_KEY_SEQUENCE: 'seq',
+        SERVER_PORT: 1234,
+        HOST: 'localhost',
+        REPO_NAME: 'repo',
+        REPO_OWNER: 'owner',
+        WORKFLOW_PATH: 'path',
       }),
     );
-    const vars = loadWorkflowVariables();
+    const { getConfig } = await import('./workflowUtils');
+    const config = getConfig();
+    expect(config).toBeDefined();
+    expect(config).toHaveProperty('ALFRED_WORKFLOW_BUNDLEID');
+    expect(config).toHaveProperty('ALFRED_WORKFLOW_NAME');
+    expect(config).toHaveProperty('ALFRED_WORKFLOW_DESCRIPTION');
+    expect(config).toHaveProperty('ALFRED_WORKFLOW_UID');
+    expect(config).toHaveProperty('ALFRED_WORKFLOW_DATA');
+    expect(config).toHaveProperty('ALFRED_KEY_SEQUENCE');
+    expect(config).toHaveProperty('SERVER_PORT');
+    expect(config).toHaveProperty('HOST');
+    expect(config).toHaveProperty('REPO_NAME');
+    expect(config).toHaveProperty('REPO_OWNER');
   });
 });
 

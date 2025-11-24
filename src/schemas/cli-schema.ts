@@ -8,6 +8,7 @@ export const cliActionSchema = z.enum([
   'terminal-command',
   'start-server',
   'kill-server',
+  'restart-server',
   'get-config',
   'save-config',
 ]);

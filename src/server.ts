@@ -6,14 +6,14 @@ import { serve } from '@hono/node-server';
 import { serveStatic } from '@hono/node-server/serve-static';
 import { Eta } from 'eta';
 import { type Context, Hono } from 'hono';
-import { getEnv, getEnvironmentVariables } from './utils/environment';
+import { getConfig } from './utils/workflowUtils';
 
-const PORT = Number(getEnv('SERVER_PORT'));
-const HOST = getEnv('HOST');
+const PORT = getConfig().SERVER_PORT || 9393;
+const HOST = getConfig().HOST || '127.0.0.1';
 // ----------------------------------------------------------------------------
 // Paths
 // ----------------------------------------------------------------------------
-const vars = getEnvironmentVariables();
+const vars = config;
 
 // ----------------------------------------------------------------------------
 // Paths

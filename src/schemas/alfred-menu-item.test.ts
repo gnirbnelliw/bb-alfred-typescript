@@ -1,21 +1,46 @@
+import { describe, expect, it, beforeEach, vi } from 'vitest';
 import fs from 'fs';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { alfredMenuItemSchema, alfredMenuItemsSchema } from './alfred-menu-item';
 
-// Mock the fs module
-vi.mock('fs');
+vi.mock('fs', async (importOriginal) => {
+  const actual = (await importOriginal()) as any;
+  return {
+    ...actual,
+    default: { ...actual, existsSync: vi.fn(() => true) },
+    existsSync: vi.fn(() => true),
+  };
+});
 
-describe('alfredMenuItemSchema', () => {
+vi.mock('path', async () => {
+  const actual = await vi.importActual<any>('path');
+  return {
+    ...actual,
+    basename: vi.fn((p) => p),
+    join: vi.fn((...args) => args.join('/')),
+  };
+});
+
+describe('iconFileExists()', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(fs.existsSync).mockReturnValue(true);
   });
 
-  afterEach(() => {
-    vi.restoreAllMocks();
+  it('should return true with a mocked file that exists', async () => {
+    const { iconFileExists } = await import('./alfred-icon');
+    expect(iconFileExists('good-icon.png')).toBe(true);
   });
 
+  it('should return false when fs.existsSync returns false', async () => {
+    vi.mocked(fs.existsSync).mockReturnValueOnce(false);
+    const { iconFileExists } = await import('./alfred-icon');
+    expect(iconFileExists('nonexistent-icon.png')).toBe(false);
+  });
+});
+
+describe('alfredMenuItemSchema', () => {
   it('should enforce uniqueness in uid field', () => {
+    // Implement
     const invalidItems = {
       items: [
         {
@@ -33,8 +58,7 @@ describe('alfredMenuItemSchema', () => {
       ],
     };
     const result = alfredMenuItemsSchema.safeParse(invalidItems);
-    console.log(JSON.stringify(result, null, 2));
-    // expect(result.success).toBe(false);
+    expect(result.success).toBe(false);
   });
 
   it('should validate a valid menu item with all required fields', () => {
@@ -125,7 +149,6 @@ describe('alfredMenuItemSchema', () => {
         path: '/path/to/icon',
       },
     };
-
     const result = alfredMenuItemSchema.safeParse(invalidItem);
     expect(result.success).toBe(true);
     // Assert that result.data does not have the type property in its icon

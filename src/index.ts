@@ -7,7 +7,7 @@ import { notionMenus } from './custom/imports/notionDocs';
 import { loremMenus, militaryOrderMenus, unicodeMenus } from './custom/imports/textSnippets';
 import { alfredMenuItemsSchema, type alfredVariableSchema } from './schemas/alfred-menu-item';
 import { alfredMenuItemFromParams } from './utils/menuUtils';
-import { config, loadWorkflowVariables } from './utils/workflowUtils';
+import { getConfig } from './utils/workflowUtils';
 
 // TODO: Is this really necessary?
 const getVariables = () => {
@@ -41,17 +41,17 @@ const getVariables = () => {
       uid: 'custom-3',
       title: 'Workflow Data Path - the whole config',
       subtitle: 'The entire workflow config as JSON',
-      arg: JSON.stringify(config, undefined, 2),
+      arg: JSON.stringify(getConfig(), undefined, 2),
       autocomplete: 'Workflow Bundle ID',
       icon: { path: 'dist/img/icons/alfred.png' },
     });
-    const loadedVars = loadWorkflowVariables();
+    const loadedVars = JSON.stringify(getConfig(), undefined, 2);
     const m4 = alfredMenuItemFromParams({
       uid: 'custom-4',
-      title: 'Load workflow config raw json from disk',
-      subtitle: 'Loads from disk or returns undefined',
-      arg: loadedVars ? JSON.stringify(loadedVars, null, 2) : 'undefined',
-      autocomplete: 'Loads the workflow config from disk with loadWorkflowVariables()',
+      title: 'Get the config by importing config',
+      subtitle: 'Loads config from config.json',
+      arg: loadedVars,
+      autocomplete: 'Loads config from config.json',
       icon: { path: 'dist/img/icons/gear.png' },
     });
 

@@ -5,12 +5,12 @@ type LatestReleaseResponse = RestEndpointMethodTypes['repos']['getLatestRelease'
 
 type LatestReleaseData = RestEndpointMethodTypes['repos']['getLatestRelease']['response']['data'];
 
-import { getVariable } from '../../utils/workflowUtils';
+import { getConfig } from '../../utils/workflowUtils';
 const owner = 'Onebrief';
 const repo = 'bc';
 
 const octokit = new Octokit({
-  auth: getVariable('GITHUB_TOKEN'),
+  auth: getConfig().GITHUB_TOKEN,
 });
 
 async function getMergedPRs(per_page = 5): Promise<string> {

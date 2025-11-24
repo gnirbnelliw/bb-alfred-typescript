@@ -1,7 +1,7 @@
 <div data-id="footer" class="fs-6">
   <p>Made with <code>Alfred</code> &amp;  <code>TypeScript</code>. 
   <span class="ms-2">
-  &copy; <%= it.year || new Date().getFullYear() %> Onebrief
+  &copy; <%= it.year || new Date().getFullYear() %> 🗽 Brooklyn, NY
   </span>
   
   </p>
