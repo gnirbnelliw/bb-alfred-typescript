@@ -3,7 +3,7 @@ import type { z } from 'zod';
 import type { cliActionSchema } from './schemas/cli-schema';
 import { killServer, serverIsRunning, startServer } from './server';
 import { getCLIParams } from './utils/workflowUtils';
-import { getEnv } from './utils/environment';
+import { config } from './utils/workflowUtils';
 
 const osaEscape = (str: string) => {
   // Remove problematic characters for osascript.
@@ -21,9 +21,7 @@ const runAlfred = (action: z.infer<typeof cliActionSchema>, argument?: string): 
 
   const script = `
     osascript -e 'tell application id "com.runningwithcrayons.Alfred"
-      run trigger "${action}" in workflow "${getEnv(
-        'alfred_workflow_bundleid',
-      )}" with argument "${normalizedArgument}"
+      run trigger "${action}" in workflow "${config.ALFRED_WORKFLOW_BUNDLEID}" with argument "${normalizedArgument}"
     end tell'
     `;
 
@@ -54,27 +52,27 @@ const runAlfred = (action: z.infer<typeof cliActionSchema>, argument?: string): 
   // ------------------------------------------------------
   // Action: navigate
   else if (cliParams.action === 'home' || cliParams.action === 'start-server') {
-    await startServer('home'); // fire-and-forget
-    // // Find out if the server is running, and if not, start it
-    // const isRunning = await serverIsRunning();
-    // if (!isRunning) {
-    //   void startServer(); // fire-and-forget
-    // }
+    // await startServer('home'); // fire-and-forget
+    // Find out if the server is running, and if not, start it
+    const isRunning = await serverIsRunning();
+    if (!isRunning) {
+      void startServer(); // fire-and-forget
+    }
 
-    // // Poll until it’s actually listening
-    // const maxWaits = 50;
-    // let counter = 0;
+    // Poll until it’s actually listening
+    const maxWaits = 50;
+    let counter = 0;
 
-    // while (!(await serverIsRunning())) {
-    //   if (counter >= maxWaits) {
-    //     console.error('❌ Server did not start in time.');
-    //     process.exit(1);
-    //   }
-    //   counter++;
-    //   await new Promise((r) => setTimeout(r, 50));
-    // }
+    while (!(await serverIsRunning())) {
+      if (counter >= maxWaits) {
+        console.error('❌ Server did not start in time.');
+        process.exit(1);
+      }
+      counter++;
+      await new Promise((r) => setTimeout(r, 50));
+    }
 
-    // runAlfred('home');
+    exec(`open http://${config.HOST}:${config.SERVER_PORT}/home`);
   }
 
   // ------------------------------------------------------

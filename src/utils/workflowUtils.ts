@@ -72,9 +72,11 @@ export const getCLIParams = (): z.infer<typeof cliSchema> => {
   // Allow for help text
   const sep = '-'.repeat(50);
   const codeSamples = [
-    'yarn tsx src/cli.ts --action home --argument "home"',
-    'yarn tsx src/cli.ts --action notify --argument "Hey there"',
-    'yarn tsx src/cli.ts --action terminal-command --argument "ls -la"',
+    'node dist/cli.js --action home --argument "home"',
+    'node dist/cli.js --action notify --argument "Hey there"',
+    'node dist/cli.js --action terminal-command --argument "ls -la"',
+    'node dist/cli.js --action kill-server',
+    'node dist/cli.js --action restart-server',
   ];
   program.on('--help', () => {
     console.log('');
