@@ -1,160 +1,24 @@
-import * as fs from 'node:fs';
-import { get } from 'node:http';
-import { parse } from 'node:path';
-import { Command } from 'commander';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import {
-  config,
-  getConfiguredVariables,
-  getDefaultWorkflowConfig,
-  getVariable,
-  getWorkflowDataDPath,
-  isValidAPIKey,
-  isValidGithubToken,
-  isValidOpenAIKey,
-  loadWorkflowVariables,
-  rawVariablesSchema,
-} from './workflowUtils';
 
-vi.mock('fs');
-
-describe('getWorkflowDataDPath', () => {
-  it('should return a string path', () => {
-    const path = getWorkflowDataDPath();
-    expect(typeof path).toBe('string');
-    expect(path.length).toBeGreaterThan(0);
-  });
-
-  it('handles errors in getWorkflowDataDPath()', () => {
-    vi.stubGlobal('process', { env: null }); // force throwing
-    const result = getWorkflowDataDPath();
-    expect(result).toBe('./');
-  });
-});
-
-describe('getConfiguredVariables', () => {
-  it('should return an array of configured variables', () => {
-    const vars = getConfiguredVariables();
-    expect(Array.isArray(vars)).toBe(true);
-  });
-});
-
-describe('getDefaultWorkflowConfig', () => {
-  it('should return the default workflow configuration', () => {
-    const defaultConfig = getDefaultWorkflowConfig();
-    expect(defaultConfig).toHaveProperty('persistentDataPath');
-    expect(defaultConfig).toHaveProperty('variables');
-  });
-});
+import { config, isValidAPIKey, isValidGithubToken, isValidOpenAIKey } from './workflowUtils';
 
 describe('config', () => {
-  it('should have default configuration values', () => {
-    expect(config).toHaveProperty('persistentDataPath');
-    expect(config).toHaveProperty('variables');
-  });
-});
-
-describe('rawVariablesSchema', () => {
-  it('should fail on an empty object', () => {
-    const parsed = rawVariablesSchema.safeParse({});
-    expect(parsed.success).toBe(false);
-  });
-
-  it('should succesfully parse an object with an empty variabes key', () => {
-    const obj: object = {
-      variables: {
-        GITHUB_TOKEN: '',
-      },
-    };
-
-    const parsed = rawVariablesSchema.safeParse(obj);
-    console.log(parsed);
-    expect(parsed.success).toBe(true);
-    // Despite being empty, it will have all of these properties set to ''
-    const defaultProps = [
-      'GITHUB_TOKEN',
-      'NOTION_API_KEY',
-      'LINEAR_API_KEY',
-      'OPENAI_KEY',
-      'TESTMO_API_KEY',
-    ];
-    for (const prop of defaultProps) {
-      expect(parsed.data?.variables).toHaveProperty(prop);
-      expect(parsed.data?.variables[prop as keyof typeof parsed.data.variables]).toBe('');
-    }
-  });
-});
-
-describe('getVariable', () => {
   beforeEach(() => {
-    // Clear mocks
     vi.clearAllMocks();
   });
 
-  it('returns actual stored variable', () => {
-    vi.spyOn(fs, 'existsSync').mockReturnValue(true);
-    vi.spyOn(fs, 'readFileSync').mockReturnValue(
-      JSON.stringify({ variables: { GITHUB_TOKEN: 'abc123', LINEAR_API_KEY: '' } }),
-    );
-
-    expect(getVariable('GITHUB_TOKEN')).toBe('abc123');
-  });
-
-  it('returns undefined if loadWorkflowVariables returns undefined', () => {
-    vi.spyOn(fs, 'existsSync').mockReturnValue(false);
-    //Mock an error on fs.readFileSync
-    vi.spyOn(fs, 'readFileSync').mockImplementation(() => {
-      throw new Error('bad read');
-    });
-    // vi.fn(loadWorkflowVariables).mockReturnValue(undefined);
-    expect(getVariable('GITHUB_TOKEN')).toBe(undefined);
-  });
-
-  it('returns undefined for empty string values of GITHUB_TOKEN', () => {
-    vi.spyOn(fs, 'existsSync').mockReturnValue(true);
-    vi.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify({ variables: {} }));
-    expect(getVariable('GITHUB_TOKEN')).toBe(undefined);
-  });
-
-  it('should not throw and return undefined for non-existent variable', () => {
-    // Mock the return value of loadWorkflowVariables
-    vi.fn(loadWorkflowVariables).mockReturnValue({
-      variables: {
-        GITHUB_TOKEN: 'ghp_some_value_tokenlllllsadldlksdl;akjdfalksdf',
-        NOTION_API_KEY: '',
-        LINEAR_API_KEY: '',
-        OPENAI_KEY: '',
-        TESTMO_API_KEY: '',
-      },
-    });
-
-    // Expect that retrieving a non-existent variable DOES NOT throw
-    expect(() => getVariable('NON_EXISTENT_VAR')).not.toThrow();
-    expect(getVariable('NON_EXISTENT_VAR')).toBeUndefined();
-  });
-});
-
-describe('loadWorkflowVariables', () => {
-  it('returns undefined if parsing throws', () => {
-    vi.spyOn(fs, 'existsSync').mockReturnValue(true);
-    vi.spyOn(fs, 'readFileSync').mockImplementation(() => {
-      throw new Error('bad read');
-    });
-
-    expect(loadWorkflowVariables()).toBeUndefined();
-  });
-
-  it('should load and parse workflow variables from config file', () => {
-    vi.fn(fs.existsSync).mockReturnValue(true);
-    vi.fn(fs.readFileSync).mockReturnValue(
-      JSON.stringify({
-        variables: {
-          GITHUB_TOKEN: 'foo',
-          LINEAR_API_KEY: 'bar',
-        },
-      }),
-    );
-    const vars = loadWorkflowVariables();
+  it('should have default configuration values', async () => {
+    expect(config).toBeDefined();
+    expect(config).toHaveProperty('ALFRED_WORKFLOW_BUNDLEID');
+    expect(config).toHaveProperty('ALFRED_WORKFLOW_NAME');
+    expect(config).toHaveProperty('ALFRED_WORKFLOW_DESCRIPTION');
+    expect(config).toHaveProperty('ALFRED_WORKFLOW_UID');
+    expect(config).toHaveProperty('ALFRED_WORKFLOW_DATA');
+    expect(config).toHaveProperty('ALFRED_KEY_SEQUENCE');
+    expect(config).toHaveProperty('SERVER_PORT');
+    expect(config).toHaveProperty('HOST');
+    expect(config).toHaveProperty('REPO_NAME');
+    expect(config).toHaveProperty('REPO_OWNER');
   });
 });
 
