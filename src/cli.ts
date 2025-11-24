@@ -85,6 +85,9 @@ const runAlfred = (action: z.infer<typeof cliActionSchema>, argument?: string): 
   // Action: killServer
   else if (cliParams.action === 'kill-server') {
     await killServer();
+  } else if (cliParams.action === 'restart-server') {
+    await killServer();
+    void startServer(); // fire-and-forget
   }
   // ------------------------------------------------------
 
