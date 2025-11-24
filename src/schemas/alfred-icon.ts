@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { z } from 'zod';
+import { config } from '../utils/workflowUtils';
 
 // Define folder path as: img/icons/
 export const iconFolderPath = path.join(__dirname, '..', 'dist', 'img', 'icons');
@@ -36,7 +37,9 @@ export const normalizedIconPath = (iconPath: string): string => {
 export const alfredIconSchema = z.object({
   path: z.string().transform((val) => {
     // if the icon exists, use it. Otherwise, use default app icon.
-    return iconFileExists(val) ? val : defaultAppIconPath();
+    const tempIcon = iconFileExists(val) ? val : defaultAppIconPath();
+    // If tempIcon starts with 'dist/' replace it with
+    return tempIcon.startsWith('dist/') ? `${config.REPO_NAME}/${tempIcon}` : tempIcon;
   }),
 });
 
