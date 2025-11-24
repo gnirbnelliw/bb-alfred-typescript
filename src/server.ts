@@ -6,10 +6,10 @@ import { serve } from '@hono/node-server';
 import { serveStatic } from '@hono/node-server/serve-static';
 import { Eta } from 'eta';
 import { type Context, Hono } from 'hono';
-import { config } from './utils/workflowUtils';
+import { getConfig } from './utils/workflowUtils';
 
-const PORT = config.SERVER_PORT || 9393;
-const HOST = config.HOST || '127.0.0.1';
+const PORT = getConfig().SERVER_PORT || 9393;
+const HOST = getConfig().HOST || '127.0.0.1';
 // ----------------------------------------------------------------------------
 // Paths
 // ----------------------------------------------------------------------------

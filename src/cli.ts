@@ -3,7 +3,7 @@ import type { z } from 'zod';
 import type { cliActionSchema } from './schemas/cli-schema';
 import { killServer, serverIsRunning, startServer } from './server';
 import { getCLIParams } from './utils/workflowUtils';
-import { config } from './utils/workflowUtils';
+import { getConfig } from './utils/workflowUtils';
 
 const osaEscape = (str: string) => {
   // Remove problematic characters for osascript.
@@ -21,7 +21,9 @@ const runAlfred = (action: z.infer<typeof cliActionSchema>, argument?: string): 
 
   const script = `
     osascript -e 'tell application id "com.runningwithcrayons.Alfred"
-      run trigger "${action}" in workflow "${config.ALFRED_WORKFLOW_BUNDLEID}" with argument "${normalizedArgument}"
+      run trigger "${action}" in workflow "${
+        getConfig().ALFRED_WORKFLOW_BUNDLEID
+      }" with argument "${normalizedArgument}"
     end tell'
     `;
 
@@ -72,7 +74,7 @@ const runAlfred = (action: z.infer<typeof cliActionSchema>, argument?: string): 
       await new Promise((r) => setTimeout(r, 50));
     }
 
-    exec(`open http://${config.HOST}:${config.SERVER_PORT}/home`);
+    exec(`open http://${getConfig().HOST}:${getConfig().SERVER_PORT}/home`);
   }
 
   // ------------------------------------------------------

@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { config, isValidAPIKey, isValidGithubToken, isValidOpenAIKey } from './workflowUtils';
+import { getConfig, isValidAPIKey, isValidGithubToken, isValidOpenAIKey } from './workflowUtils';
 
 describe('config', () => {
   beforeEach(() => {
@@ -8,6 +8,7 @@ describe('config', () => {
   });
 
   it('should have default configuration values', async () => {
+    const config = getConfig();
     expect(config).toBeDefined();
     expect(config).toHaveProperty('ALFRED_WORKFLOW_BUNDLEID');
     expect(config).toHaveProperty('ALFRED_WORKFLOW_NAME');

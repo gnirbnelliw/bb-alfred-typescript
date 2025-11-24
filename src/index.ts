@@ -7,7 +7,7 @@ import { notionMenus } from './custom/imports/notionDocs';
 import { loremMenus, militaryOrderMenus, unicodeMenus } from './custom/imports/textSnippets';
 import { alfredMenuItemsSchema, type alfredVariableSchema } from './schemas/alfred-menu-item';
 import { alfredMenuItemFromParams } from './utils/menuUtils';
-import { config } from './utils/workflowUtils';
+import { getConfig } from './utils/workflowUtils';
 
 // TODO: Is this really necessary?
 const getVariables = () => {
@@ -41,11 +41,11 @@ const getVariables = () => {
       uid: 'custom-3',
       title: 'Workflow Data Path - the whole config',
       subtitle: 'The entire workflow config as JSON',
-      arg: JSON.stringify(config, undefined, 2),
+      arg: JSON.stringify(getConfig(), undefined, 2),
       autocomplete: 'Workflow Bundle ID',
       icon: { path: 'dist/img/icons/alfred.png' },
     });
-    const loadedVars = JSON.stringify(config, undefined, 2);
+    const loadedVars = JSON.stringify(getConfig(), undefined, 2);
     const m4 = alfredMenuItemFromParams({
       uid: 'custom-4',
       title: 'Get the config by importing config',
