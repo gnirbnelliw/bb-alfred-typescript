@@ -54,15 +54,8 @@ setup:
 	@echo "  \"OPENAI_KEY\": \"$(OPENAI_KEY)\","          >> config.json
 	@echo "  \"TESTMO_API_KEY\": \"$(TESTMO_API_KEY)\","  >> config.json
 	@echo "  \"NOTION_API_KEY\": \"$(NOTION_API_KEY)\""   >> config.json
-
-	@# Note the absence of a comma above ☝🏽
-
 	@echo "}"                                  >> config.json
 
-	@# Now copy config.json into into $(REPO)
-	@cp config.json $(REPO)/config.json
-
-	@echo "Done writing config.json."
 
 	# -----------------------------------------------
 	@echo "🔥 Dumping environment to printenv.txt..."
@@ -74,11 +67,19 @@ setup:
 	@echo "🔥 Ensure repo exists..."
 	# -----------------------------------------------
 	@if [ ! -d "$(REPO)" ]; then \
-		echo "📦 Repo not found. Cloning..."; \
+		echo "⚠️ Repo not found. Cloning..."; \
 		$(GIT) clone https://github.com/$(REPO_OWNER)/$(REPO).git; \
 	else \
 		echo "📦 Repo exists. Skipping clone..."; \
 	fi
+
+	# -----------------------------------------------
+	@echo "🔥 Copying config.json into repo..."
+	# -----------------------------------------------
+
+	@# Now copy config.json into into $(REPO)
+	@cp config.json $(REPO)/config.json
+	@echo "Done writing config to $(REPO)/config.json"
 
 	# -----------------------------------------------
 	# Conditional Git Sync
@@ -127,9 +128,15 @@ endif
 	# -----------------------------------------------
 	@echo "🔥 Starting web server on port $(SERVER_PORT)..."
 	# -----------------------------------------------
-# 	@cd $(REPO) && node dist/cli.js --action kill-server && sleep 1 && node dist/cli.js --action home
-	@cd $(REPO) && node dist/cli.js --action kill-server 
-	@cd $(REPO) && nohup node dist/cli.js --action home >/dev/null 2>&1 &
+	# Kill server if running (robust)
+	@lsof -ti tcp:$(SERVER_PORT) | xargs kill -9 || true
+
+	# Start server fully detached
+	@cd $(REPO) && \
+	nohup node dist/cli.js --action home \
+	> server.log 2>&1 & echo $$! > server.pid
+
+	@echo "Server started on $(HOST):$(SERVER_PORT)"
 
 	# -----------------------------------------------
 	@echo "🔥 Setup complete. 🔥"
